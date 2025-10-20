@@ -1,3 +1,5 @@
+import Header from "@/components/header";
+
 export default function PrivatePageLayout({
   children,
 }: Readonly<{
@@ -5,10 +7,8 @@ export default function PrivatePageLayout({
 }>) {
   return (
     <>
-      <header>Header</header>
-      <main className="bg-red-400 max-w-screen-xl mx-auto px-10">
-        {children}
-      </main>
+      <Header />
+      <main className="max-w-screen-xl mx-auto px-10 pt-16">{children}</main>
     </>
   );
 }
