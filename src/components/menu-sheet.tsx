@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { logout } from "@/app/(auth)/login/actions";
 
 export default async function MenuSheet() {
   const supabase = await createClient();
@@ -71,7 +72,11 @@ export default async function MenuSheet() {
           </li>
         </ul>
         <SheetFooter>
-          <Button>ログアウト</Button>
+          <form>
+            <Button className="w-full" formAction={logout}>
+              ログアウト
+            </Button>
+          </form>
         </SheetFooter>
       </SheetContent>
     </Sheet>
