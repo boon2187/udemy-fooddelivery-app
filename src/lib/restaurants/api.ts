@@ -28,8 +28,9 @@ export async function getRamenRestaurants() {
     method: "POST",
     body: JSON.stringify(requestBody),
     headers: header,
+    next: { revalidate: 86400 }, // 24時間でキャッシュを更新
   });
 
   const data = await response.json();
-  console.log(data);
+  // console.log(data);
 }
