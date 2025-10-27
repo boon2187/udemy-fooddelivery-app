@@ -1,8 +1,10 @@
 import CarouselContainer from "@/components/carousel-container";
 import RestaurantCard from "@/components/restaurant-card";
 import Section from "@/components/section";
+import { getRamenRestaurants } from "@/lib/restaurants/api";
 
-export default function Home() {
+export default async function Home() {
+  await getRamenRestaurants();
   return (
     <Section title="近くのお店">
       <CarouselContainer slideNumber={4}>

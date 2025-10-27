@@ -10,13 +10,13 @@ export async function getRamenRestaurants() {
   };
 
   const requestBody = {
-    // includedTypes: ["restaurant"],
+    includedPrimaryTypes: ["ramen_restaurant"],
     maxResultCount: 10,
     locationRestriction: {
       circle: {
         center: {
-          latitude: 37.7937,
-          longitude: -122.3965,
+          latitude: 36.2307643,
+          longitude: 137.9627271,
         },
         radius: 500.0,
       },
