@@ -31,6 +31,12 @@ export async function getRamenRestaurants() {
     next: { revalidate: 86400 }, // 24時間でキャッシュを更新
   });
 
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error(errorData);
+    return { error: `NearbySearchリクエスト失敗: ${response.status}` };
+  }
+
   const data = await response.json();
   // console.log(data);
 }
