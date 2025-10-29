@@ -1,4 +1,5 @@
 import { PlaceSearchResult, Restaurant } from "@/types";
+import { getPhotoUrl } from "./api";
 
 export async function transformPlaceResults(restaurants: PlaceSearchResult[]) {
   const promises = restaurants.map(
