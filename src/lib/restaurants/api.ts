@@ -1,3 +1,6 @@
+import { GooglePlacesSearchApiResponse } from "@/types";
+import { transformPlaceResults } from "./utils";
+
 export async function getRamenRestaurants() {
   const url = "https://places.googleapis.com/v1/places:searchNearby";
 
@@ -6,7 +9,7 @@ export async function getRamenRestaurants() {
     "Content-Type": "application/json",
     "X-Goog-Api-key": apiKey!,
     "X-Goog-FieldMask":
-      "places.id,places.displayName,places.types,places.primaryType,places.photos",
+      "places.id,places.displayName,places.primaryType,places.photos",
   };
 
   const requestBody = {
@@ -37,6 +40,13 @@ export async function getRamenRestaurants() {
     return { error: `NearbySearchリクエスト失敗: ${response.status}` };
   }
 
-  const data = await response.json();
-  // console.log(data);
+  const data: GooglePlacesSearchApiResponse = await response.json();
+  console.log(data);
+
+  if (!data.places) {
+    return { data: [] };
+  }
+  const nearbyRamenRestaurants = data.places;
+
+  transformPlaceResults(nearbyRamenRestaurants);
 }
