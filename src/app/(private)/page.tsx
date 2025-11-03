@@ -4,14 +4,22 @@ import Section from "@/components/section";
 import { getRamenRestaurants } from "@/lib/restaurants/api";
 
 export default async function Home() {
-  await getRamenRestaurants();
+  const { data: nearbyRamenRestaurants, error } = await getRamenRestaurants();
   return (
-    <Section title="近くのお店">
-      <CarouselContainer slideNumber={4}>
-        {Array.from({ length: 8 }).map((_, index) => (
-          <RestaurantCard key={index} />
-        ))}
-      </CarouselContainer>
-    </Section>
+    <>
+      {!nearbyRamenRestaurants ? (
+        <p>{error}</p>
+      ) : nearbyRamenRestaurants.length > 0 ? (
+        <Section title="近くのお店">
+          <CarouselContainer slideNumber={4}>
+            {nearbyRamenRestaurants.map((restaurant) => (
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            ))}
+          </CarouselContainer>
+        </Section>
+      ) : (
+        <p>近くのラーメン店が見つかりません</p>
+      )}
+    </>
   );
 }

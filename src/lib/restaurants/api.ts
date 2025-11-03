@@ -1,7 +1,10 @@
-import { GooglePlacesSearchApiResponse } from "@/types";
+import { GooglePlacesSearchApiResponse, Restaurant } from "@/types";
 import { transformPlaceResults } from "./utils";
 
-export async function getRamenRestaurants() {
+export async function getRamenRestaurants(): Promise<{
+  data: Restaurant[];
+  error?: string;
+}> {
   const url = "https://places.googleapis.com/v1/places:searchNearby";
 
   const apiKey = process.env.GOOGLE_API_KEY;
@@ -37,7 +40,10 @@ export async function getRamenRestaurants() {
   if (!response.ok) {
     const errorData = await response.json();
     console.error(errorData);
-    return { error: `NearbySearchリクエスト失敗: ${response.status}` };
+    return {
+      data: [],
+      error: `NearbySearchリクエスト失敗: ${response.status}`,
+    };
   }
 
   const data: GooglePlacesSearchApiResponse = await response.json();
@@ -50,6 +56,7 @@ export async function getRamenRestaurants() {
 
   const ramenRestaurants = await transformPlaceResults(nearbyRamenRestaurants);
   console.log("ramenRestaurants", ramenRestaurants);
+  return { data: ramenRestaurants };
 }
 
 export async function getPhotoUrl(name: string, maxWidth = 400) {
