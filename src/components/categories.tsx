@@ -1,7 +1,7 @@
 import CarouselContainer from "./carousel-container";
 import Category from "./category";
 
-interface CategoryType {
+export interface CategoryType {
   categoryName: string;
   type: string;
   imageUrl: string;
@@ -73,7 +73,7 @@ export default function Categories() {
   return (
     <CarouselContainer slideNumber={10}>
       {categories.map((category) => (
-        <Category />
+        <Category key={category.categoryName} category={category} />
       ))}
     </CarouselContainer>
   );
