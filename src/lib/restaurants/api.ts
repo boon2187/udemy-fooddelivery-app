@@ -6,6 +6,7 @@ export async function getRestaurants(): Promise<{
   data: Restaurant[];
   error?: string;
 }> {
+  // throw new Error("test error");
   const url = "https://places.googleapis.com/v1/places:searchNearby";
 
   const apiKey = process.env.GOOGLE_API_KEY;
