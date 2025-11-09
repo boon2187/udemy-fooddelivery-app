@@ -12,6 +12,9 @@ import { useState } from "react";
 export default function PlaceSearchBar() {
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
+  const handleBlur = () => {
+    setOpen(false);
+  };
 
   return (
     <Command className="overflow-visible bg-muted" shouldFilter={false}>
@@ -25,6 +28,7 @@ export default function PlaceSearchBar() {
           }
           setInputText(text);
         }}
+        onBlur={handleBlur}
       />
       {open && (
         <div className="relative">
