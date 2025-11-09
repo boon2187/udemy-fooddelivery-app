@@ -74,12 +74,20 @@ export default function Categories() {
   ];
 
   const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category");
   const router = useRouter();
 
   const searchResaurantsByCategory = (category: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set("category", category);
-    router.replace(`/search?${params.toString()}`);
+
+    if (currentCategory === category) {
+      // ホームページに戻る
+      router.replace("/");
+      return;
+    } else {
+      params.set("category", category);
+      router.replace(`/search?${params.toString()}`);
+    }
   };
 
   return (
