@@ -1,13 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import { CategoryType } from "./categories";
 
 interface CategoryProps {
   category: CategoryType;
+  onClick: (category: string) => void;
 }
 
-export default function Category({ category }: CategoryProps) {
+export default function Category({ category, onClick }: CategoryProps) {
   return (
-    <div>
+    <div onClick={() => onClick(category.type)}>
       <div className="relative aspect-square overflow-hidden rounded-full">
         <Image
           className="object-cover scale-75"

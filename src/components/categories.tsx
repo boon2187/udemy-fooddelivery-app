@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
 import CarouselContainer from "./carousel-container";
 import Category from "./category";
 
@@ -70,10 +73,24 @@ export default function Categories() {
     },
   ];
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const searchResaurantsByCategory = (category: string) => {
+    console.log("category is searched", category);
+    const params = new URLSearchParams(searchParams);
+    params.set("category", category);
+    router.replace(`/search?${params.toString()}`);
+  };
+
   return (
     <CarouselContainer slideNumber={10}>
       {categories.map((category) => (
-        <Category key={category.categoryName} category={category} />
+        <Category
+          key={category.categoryName}
+          category={category}
+          onClick={searchResaurantsByCategory}
+        />
       ))}
     </CarouselContainer>
   );
