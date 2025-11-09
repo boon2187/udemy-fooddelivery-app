@@ -97,6 +97,7 @@ export default function Categories() {
           key={category.categoryName}
           category={category}
           onClick={searchResaurantsByCategory}
+          isSelected={currentCategory === category.type}
         />
       ))}
     </CarouselContainer>
