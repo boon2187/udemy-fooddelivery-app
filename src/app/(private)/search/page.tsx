@@ -1,3 +1,6 @@
+import Categories from "@/components/categories";
+import RestaurantList from "@/components/restaurant-list";
+import Section from "@/components/section";
 import { fetchCategoryRestaurants } from "@/lib/restaurants/api";
 
 export default async function SearchPage({
@@ -10,11 +13,23 @@ export default async function SearchPage({
   if (category) {
     const { data: categoryRestaurants, error: fetchError } =
       await fetchCategoryRestaurants(category);
-    if (fetchError) {
-      return <div>Error: {fetchError}</div>;
-    }
     console.log("categoryRestaurants", categoryRestaurants);
-    return <div>Category Restaurants: {categoryRestaurants.length}</div>;
+    return (
+      <>
+        <div className="mb-4">
+          <Categories />
+        </div>
+        {!categoryRestaurants ? (
+          <p>{fetchError}</p>
+        ) : categoryRestaurants.length > 0 ? (
+          <RestaurantList restaurants={categoryRestaurants} />
+        ) : (
+          <p>
+            カテゴリー<strong>{category}</strong>のレストランが見つかりません
+          </p>
+        )}
+      </>
+    );
   }
   // return (
   //   <div>
