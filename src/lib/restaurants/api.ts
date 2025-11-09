@@ -142,6 +142,67 @@ export async function getRamenRestaurants(): Promise<{
   return { data: ramenRestaurants };
 }
 
+// カテゴリー検索機能
+export async function fetchCategoryRestaurants(category: string): Promise<{
+  data: Restaurant[];
+  error?: string;
+}> {
+  const url = "https://places.googleapis.com/v1/places:searchNearby";
+
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const header = {
+    "Content-Type": "application/json",
+    "X-Goog-Api-key": apiKey!,
+    "X-Goog-FieldMask":
+      "places.id,places.displayName,places.primaryType,places.photos",
+  };
+
+  const requestBody = {
+    includedPrimaryTypes: [category],
+    maxResultCount: 10,
+    locationRestriction: {
+      circle: {
+        center: {
+          latitude: 36.2307643,
+          longitude: 137.9627271,
+        },
+        radius: 500.0,
+      },
+    },
+    languageCode: "ja",
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(requestBody),
+    headers: header,
+    next: { revalidate: 86400 }, // 24時間でキャッシュを更新
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error(errorData);
+    return {
+      data: [],
+      error: `NearbySearchリクエスト失敗: ${response.status}`,
+    };
+  }
+
+  const data: GooglePlacesSearchApiResponse = await response.json();
+  console.log(data);
+
+  if (!data.places) {
+    return { data: [] };
+  }
+  const nearbyCategoryRestaurants = data.places;
+
+  const categoryRestaurants = await transformPlaceResults(
+    nearbyCategoryRestaurants
+  );
+  console.log("categoryRestaurants", categoryRestaurants);
+  return { data: categoryRestaurants };
+}
+
 export async function getPhotoUrl(name: string, maxWidth = 400) {
   "use cache";
   console.log("getPhotoUrl実行");
