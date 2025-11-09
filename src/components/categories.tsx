@@ -77,7 +77,6 @@ export default function Categories() {
   const router = useRouter();
 
   const searchResaurantsByCategory = (category: string) => {
-    console.log("category is searched", category);
     const params = new URLSearchParams(searchParams);
     params.set("category", category);
     router.replace(`/search?${params.toString()}`);
