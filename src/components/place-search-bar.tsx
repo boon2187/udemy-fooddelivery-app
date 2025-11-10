@@ -8,18 +8,21 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function PlaceSearchBar() {
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
 
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useDebouncedCallback(async () => {
+    // console.log("inputText", inputText);
     try {
-      // APIを呼び出す
+      // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
+      const response = await fetch(`api/restaurant?input=${inputText}`);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }
-  };
+  }, 500);
 
   // 入力が合った時にサジェスチョンを得るAPIを呼ぶ
   useEffect(() => {
