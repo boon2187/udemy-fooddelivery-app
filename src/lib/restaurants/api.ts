@@ -66,7 +66,7 @@ export async function getRestaurants(): Promise<{
   }
 
   const data: GooglePlacesSearchApiResponse = await response.json();
-  console.log(data);
+  // console.log(data);
 
   if (!data.places) {
     return { data: [] };
@@ -76,7 +76,7 @@ export async function getRestaurants(): Promise<{
   const matchedRestaurants = nearbyRestaurants.filter(
     (place) => place.primaryType && desiredTypes.includes(place.primaryType)
   );
-  console.log("matchedRestaurants", matchedRestaurants);
+  // console.log("matchedRestaurants", matchedRestaurants);
 
   const restaurants = await transformPlaceResults(matchedRestaurants);
   console.log("restaurants", restaurants);
@@ -130,7 +130,7 @@ export async function getRamenRestaurants(): Promise<{
   }
 
   const data: GooglePlacesSearchApiResponse = await response.json();
-  console.log(data);
+  // console.log(data);
 
   if (!data.places) {
     return { data: [] };
@@ -189,7 +189,7 @@ export async function fetchCategoryRestaurants(category: string): Promise<{
   }
 
   const data: GooglePlacesSearchApiResponse = await response.json();
-  console.log(data);
+  // console.log(data);
 
   if (!data.places) {
     return { data: [] };
