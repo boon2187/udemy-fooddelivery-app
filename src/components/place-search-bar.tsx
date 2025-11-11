@@ -9,16 +9,20 @@ import {
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { v4 as uuidv4 } from "uuid";
 
 export default function PlaceSearchBar() {
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
+  const [sessionToken, setSessionToken] = useState(uuidv4());
 
   const fetchSuggestions = useDebouncedCallback(async () => {
     // console.log("inputText", inputText);
     try {
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
-      const response = await fetch(`api/restaurant?input=${inputText}`);
+      const response = await fetch(
+        `api/restaurant?input=${inputText}&sessionToken=${sessionToken}`
+      );
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }
