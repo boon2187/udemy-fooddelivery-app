@@ -21,7 +21,7 @@ export default function PlaceSearchBar() {
     try {
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
       const response = await fetch(
-        `api/restaurant?input=${inputText}&sessionToken=${sessionToken}`
+        `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}`
       );
     } catch (error) {
       console.error("Error fetching suggestions:", error);
