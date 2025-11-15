@@ -8,7 +8,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { RestaurantSuggestion } from "@/types";
-import { MapPin, Search } from "lucide-react";
+import { LoaderCircle, MapPin, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
@@ -18,6 +18,7 @@ export default function PlaceSearchBar() {
   const [inputText, setInputText] = useState("");
   const [sessionToken, setSessionToken] = useState(uuidv4());
   const [suggestions, setSuggestions] = useState<RestaurantSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const fetchSuggestions = useDebouncedCallback(async () => {
     // console.log("inputText", inputText);
     try {
@@ -34,6 +35,8 @@ export default function PlaceSearchBar() {
       setSuggestions(data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, 500);
 
@@ -44,6 +47,7 @@ export default function PlaceSearchBar() {
       setOpen(false);
       return;
     }
+    setIsLoading(true);
     setOpen(true);
     fetchSuggestions();
   }, [inputText]);
@@ -70,7 +74,15 @@ export default function PlaceSearchBar() {
       {open && (
         <div className="relative">
           <CommandList className="absolute bg-background shadow-md rounded=lg w-full">
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>
+              <div className="flex items-center justify-center">
+                {isLoading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "No results found."
+                )}
+              </div>
+            </CommandEmpty>
             {suggestions.map((suggestion, index) => (
               <CommandItem
                 className="p-4"
