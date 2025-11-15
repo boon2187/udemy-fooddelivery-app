@@ -1,3 +1,4 @@
+import { GooglePlacesAutocompleteApiResponse } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -57,11 +58,11 @@ export async function GET(request: NextRequest) {
       console.error(errorData);
       return {
         data: [],
-        error: `NearbySearchリクエスト失敗: ${response.status}`,
+        error: `Autocompleteリクエスト失敗: ${response.status}`,
       };
     }
 
-    const data = await response.json();
+    const data: GooglePlacesAutocompleteApiResponse = await response.json();
     console.log("レスポンスdata", JSON.stringify(data, null, 2));
     return NextResponse.json({ message: "success" });
     // return NextResponse.json({ data: data });
