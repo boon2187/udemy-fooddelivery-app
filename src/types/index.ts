@@ -43,3 +43,9 @@ export interface PlaceAutocompleteResult {
     };
   };
 }
+
+export interface RestaurantSuggestion {
+  type: string;
+  placeId: string;
+  placeName: string;
+}
