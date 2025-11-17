@@ -8,7 +8,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { RestaurantSuggestion } from "@/types";
-import { LoaderCircle, MapPin, Search } from "lucide-react";
+import { AlertCircle, LoaderCircle, MapPin, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
@@ -19,10 +19,13 @@ export default function PlaceSearchBar() {
   const [sessionToken, setSessionToken] = useState(uuidv4());
   const [suggestions, setSuggestions] = useState<RestaurantSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const fetchSuggestions = useDebouncedCallback(async () => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const fetchSuggestions = useDebouncedCallback(async (input: string) => {
+    setErrorMessage(null);
     // console.log("inputText", inputText);
     try {
-      if (!inputText.trim()) {
+      if (!input.trim()) {
         setSuggestions([]);
         return;
       }
@@ -30,11 +33,18 @@ export default function PlaceSearchBar() {
       const response = await fetch(
         `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}`
       );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error);
+        return;
+      }
       const data: RestaurantSuggestion[] = await response.json();
       console.log("suggestions data", data);
       setSuggestions(data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+      setErrorMessage("予期せぬエラーが発生しました");
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +59,7 @@ export default function PlaceSearchBar() {
     }
     setIsLoading(true);
     setOpen(true);
-    fetchSuggestions();
+    fetchSuggestions(inputText);
   }, [inputText]);
 
   const handleFocus = () => {
@@ -78,8 +88,13 @@ export default function PlaceSearchBar() {
               <div className="flex items-center justify-center">
                 {isLoading ? (
                   <LoaderCircle className="animate-spin" />
+                ) : errorMessage ? (
+                  <div>
+                    <AlertCircle />
+                    {errorMessage}
+                  </div>
                 ) : (
-                  "No results found."
+                  "レストランが見つかりません"
                 )}
               </div>
             </CommandEmpty>
