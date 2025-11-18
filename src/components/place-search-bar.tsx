@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/command";
 import { RestaurantSuggestion } from "@/types";
 import { AlertCircle, LoaderCircle, MapPin, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,6 +21,9 @@ export default function PlaceSearchBar() {
   const [suggestions, setSuggestions] = useState<RestaurantSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const clickedOnItem = useRef(false);
+  const router = useRouter();
 
   const fetchSuggestions = useDebouncedCallback(async (input: string) => {
     setErrorMessage(null);
@@ -68,7 +72,21 @@ export default function PlaceSearchBar() {
     }
   };
   const handleBlur = () => {
+    if (clickedOnItem.current) {
+      clickedOnItem.current = false;
+      return;
+    }
     setOpen(false);
+  };
+
+  const handleSelectSuggestion = (suggestion: RestaurantSuggestion) => {
+    console.log("suggestion", suggestion);
+
+    if (suggestion.type === "placePrediction") {
+      router.push(
+        `restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`
+      );
+    }
   };
 
   return (
@@ -103,6 +121,8 @@ export default function PlaceSearchBar() {
                 className="p-4"
                 key={suggestion.placeId ?? index}
                 value={suggestion.placeName}
+                onSelect={() => handleSelectSuggestion(suggestion)}
+                onMouseDown={() => (clickedOnItem.current = true)}
               >
                 {suggestion.type === "queryPrediction" ? (
                   <Search />
