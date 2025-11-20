@@ -86,15 +86,28 @@ export default function PlaceSearchBar() {
       router.push(
         `restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`
       );
+    } else {
+      router.replace(`/search?restaurant=${suggestion.placeName}`);
+    }
+    setOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!inputText.trim()) return;
+    if (e.key === "Enter") {
+      router.push(`/search?restaurant=${inputText}`);
     }
   };
 
   return (
-    <Command className="overflow-visible bg-muted" shouldFilter={false}>
+    <Command
+      className="overflow-visible bg-muted"
+      onKeyDown={handleKeyDown}
+      shouldFilter={false}
+    >
       <CommandInput
         value={inputText}
         placeholder="Type a command or search..."
-        className=""
         onValueChange={setInputText}
         onBlur={handleBlur}
         onFocus={handleFocus}
