@@ -1,14 +1,17 @@
 import Categories from "@/components/categories";
 import RestaurantList from "@/components/restaurant-list";
 import Section from "@/components/section";
-import { fetchCategoryRestaurants } from "@/lib/restaurants/api";
+import {
+  fetchCategoryRestaurants,
+  fetchRestaurantsByKeyword,
+} from "@/lib/restaurants/api";
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category: string }>;
+  searchParams: Promise<{ category: string; restaurant: string }>;
 }) {
-  const { category } = await searchParams;
+  const { category, restaurant } = await searchParams;
 
   if (category) {
     const { data: categoryRestaurants, error: fetchError } =
@@ -30,6 +33,10 @@ export default async function SearchPage({
         )}
       </>
     );
+  } else if (restaurant) {
+    const { data: restaurants, error: fetchError } =
+      await fetchRestaurantsByKeyword(restaurant);
+    console.log("textSearch results: restaurants", restaurants);
   }
   // return (
   //   <div>
