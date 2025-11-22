@@ -23,7 +23,7 @@ export default async function MenuSheet() {
   if (!user) {
     redirect("/login");
   }
-  console.log("ログインしたuser", user);
+  // console.log("ログインしたuser", user);
   const { full_name, avatar_url } = user.user_metadata;
 
   return (
