@@ -86,6 +86,8 @@ export default function PlaceSearchBar() {
       router.push(
         `restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`
       );
+      // 同じセッショントークンを使いまわしできないので、セッショントークンを更新
+      setSessionToken(uuidv4());
     } else {
       router.replace(`/search?restaurant=${suggestion.placeName}`);
     }
@@ -96,6 +98,7 @@ export default function PlaceSearchBar() {
     if (!inputText.trim()) return;
     if (e.key === "Enter") {
       router.push(`/search?restaurant=${inputText}`);
+      setOpen(false);
     }
   };
 

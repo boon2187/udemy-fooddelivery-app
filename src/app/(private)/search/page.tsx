@@ -5,6 +5,7 @@ import {
   fetchCategoryRestaurants,
   fetchRestaurantsByKeyword,
 } from "@/lib/restaurants/api";
+import { redirect } from "next/navigation";
 
 export default async function SearchPage({
   searchParams,
@@ -23,7 +24,7 @@ export default async function SearchPage({
           <Categories />
         </div>
         {!categoryRestaurants ? (
-          <p>{fetchError}</p>
+          <p className="text-destructive">{fetchError}</p>
         ) : categoryRestaurants.length > 0 ? (
           <RestaurantList restaurants={categoryRestaurants} />
         ) : (
@@ -37,6 +38,28 @@ export default async function SearchPage({
     const { data: restaurants, error: fetchError } =
       await fetchRestaurantsByKeyword(restaurant);
     console.log("textSearch results: restaurants", restaurants);
+
+    return (
+      <>
+        {!restaurants ? (
+          <p className="text-destructive">{fetchError}</p>
+        ) : restaurants.length > 0 ? (
+          <>
+            <div className="mb-4">
+              {restaurant} の検索結果{restaurants.length} 件の結果
+            </div>
+            <RestaurantList restaurants={restaurants} />
+          </>
+        ) : (
+          <p>
+            キーワード<strong>{restaurant}</strong>
+            に一致するレストランが見つかりません
+          </p>
+        )}
+      </>
+    );
+  } else {
+    redirect("/");
   }
   // return (
   //   <div>
