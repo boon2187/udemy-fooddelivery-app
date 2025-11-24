@@ -19,10 +19,57 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+
+import { v4 as uuidv4 } from "uuid";
 
 export default function AddressModal() {
   const [inputText, setInputText] = useState("");
+  const [sessionToken, setSessionToken] = useState(uuidv4());
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const fetchSuggestions = useDebouncedCallback(async (input: string) => {
+    setErrorMessage(null);
+    // console.log("inputText", inputText);
+    try {
+      if (!input.trim()) {
+        setSuggestions([]);
+        return;
+      }
+      // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
+      const response = await fetch(
+        `api/address/autocomplete?input=${inputText}&sessionToken=${sessionToken}`
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error);
+        return;
+      }
+      const data = await response.json();
+      console.log("suggestions data", data);
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setErrorMessage("予期せぬエラーが発生しました");
+    } finally {
+      setIsLoading(false);
+    }
+  }, 500);
+
+  // 入力が合った時にサジェスチョンを得るAPIを呼ぶ
+  useEffect(() => {
+    if (!inputText.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    setIsLoading(true);
+    fetchSuggestions(inputText);
+  }, [inputText]);
+
   return (
     <Dialog>
       <DialogTrigger>住所を選択</DialogTrigger>
