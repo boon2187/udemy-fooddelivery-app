@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -17,8 +19,10 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { useState } from "react";
 
 export default function AddressModal() {
+  const [inputText, setInputText] = useState("");
   return (
     <Dialog>
       <DialogTrigger>住所を選択</DialogTrigger>
@@ -31,14 +35,27 @@ export default function AddressModal() {
         </DialogHeader>
         <Command shouldFilter={false}>
           <div className="bg-muted mb-4">
-            <CommandInput placeholder="Type a command or search..." />
+            <CommandInput
+              value={inputText}
+              onValueChange={setInputText}
+              placeholder="Type a command or search..."
+            />
           </div>
-          <h3 className="font-bold text-lg mb-2">保存済みの住所</h3>
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandItem className="p-5">Calendar</CommandItem>
-            <CommandItem className="p-5">Search Emoji</CommandItem>
-            <CommandItem className="p-5">Calculator</CommandItem>
+            {inputText ? (
+              // サジェスチョンを表示
+              <>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <div>サジェスチョン表示</div>
+              </>
+            ) : (
+              <>
+                <h3 className="font-bold text-lg mb-2">保存済みの住所</h3>
+                <CommandItem className="p-5">Calendar</CommandItem>
+                <CommandItem className="p-5">Search Emoji</CommandItem>
+                <CommandItem className="p-5">Calculator</CommandItem>
+              </>
+            )}
           </CommandList>
         </Command>
       </DialogContent>
