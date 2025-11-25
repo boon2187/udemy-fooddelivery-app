@@ -1,4 +1,5 @@
 import {
+  AddressSuggestion,
   GooglePlacesAutocompleteApiResponse,
   RestaurantSuggestion,
 } from "@/types";
@@ -73,28 +74,22 @@ export async function GET(request: NextRequest) {
 
     const results = suggestions
       .map((suggestion) => {
-        if (
-          suggestion.placePrediction &&
-          suggestion.placePrediction.placeId &&
-          suggestion.placePrediction.structuredFormat?.mainText?.text
-        ) {
-          return {
-            type: "placePrediction",
-            placeId: suggestion.placePrediction.placeId,
-            placeName:
-              suggestion.placePrediction.structuredFormat?.mainText?.text,
-          };
-        } else if (
-          suggestion.queryPrediction &&
-          suggestion.queryPrediction.text?.text
-        ) {
-          return {
-            type: "queryPrediction",
-            placeName: suggestion.queryPrediction.text?.text,
-          };
-        }
+        return {
+          placeId: suggestion.placePrediction?.placeId,
+          placeName:
+            suggestion.placePrediction?.structuredFormat?.mainText?.text,
+          address_text:
+            suggestion.placePrediction?.structuredFormat?.secondaryText?.text,
+        };
       })
-      .filter((result): result is RestaurantSuggestion => result !== undefined);
+      .filter(
+        (suggestion): suggestion is AddressSuggestion =>
+          !!suggestion.placeId &&
+          !!suggestion.placeName &&
+          !!suggestion.address_text
+      );
+
+    console.log("address suggestion resluts", results);
 
     return NextResponse.json(results);
     // return NextResponse.json({ data: data });
