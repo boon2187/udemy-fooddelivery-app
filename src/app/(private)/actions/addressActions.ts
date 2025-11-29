@@ -1,5 +1,6 @@
 "use server";
 
+import { getPlaceDetails } from "@/lib/restaurants/api";
 import { AddressSuggestion } from "@/types";
 
 export async function selectSuggestionAction(
@@ -7,4 +8,6 @@ export async function selectSuggestionAction(
   sessionToken: string
 ) {
   console.log("selectSuggestionAction", suggestion, sessionToken);
+
+  await getPlaceDetails(suggestion.placeId, ["location"], sessionToken);
 }
