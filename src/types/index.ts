@@ -9,6 +9,14 @@ export interface GooglePlacesSearchApiResponse {
   places?: PlaceSearchResult[];
 }
 
+export interface GooglePlacesDetailsApiResponse {
+  location?: { latitude?: number; longitude?: number };
+}
+
+export interface PlaceDetailsAll {
+  location?: { latitude?: number; longitude?: number };
+}
+
 export interface PlaceSearchResult {
   id: string;
   displayName?: {

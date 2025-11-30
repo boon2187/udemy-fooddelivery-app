@@ -9,5 +9,10 @@ export async function selectSuggestionAction(
 ) {
   console.log("selectSuggestionAction", suggestion, sessionToken);
 
-  await getPlaceDetails(suggestion.placeId, ["location"], sessionToken);
+  const { data: locationData, error } = await getPlaceDetails(
+    suggestion.placeId,
+    ["location"],
+    sessionToken
+  );
+  console.log("locationData", locationData);
 }
