@@ -81,6 +81,7 @@ export default function AddressModal() {
       await selectSuggestionAction(suggestion, sessionToken);
       setSessionToken(uuidv4());
     } catch (error) {
+      console.error(error);
       alert("予期せぬエラーが発生しました");
     }
   };

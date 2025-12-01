@@ -306,7 +306,7 @@ export async function getPlaceDetails(
     const errorData = await response.json();
     console.error(errorData);
     return {
-      data: [],
+      // data: [],
       error: `PlaceDetailsリクエスト失敗: ${response.status}`,
     };
   }
