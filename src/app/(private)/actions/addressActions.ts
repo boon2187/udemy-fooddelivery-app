@@ -41,16 +41,32 @@ export async function selectSuggestionAction(
   }
 
   // データベースへの保存処理
-  const { error: insertError } = await supabase.from("addresses").insert({
-    name: suggestion.placeName,
-    address_text: suggestion.address_text,
-    longitude: locationData.location.longitude,
-    latitude: locationData.location.latitude,
-    user_id: user.id,
-  });
+  const { data: newAddress, error: insertError } = await supabase
+    .from("addresses")
+    .insert({
+      name: suggestion.placeName,
+      address_text: suggestion.address_text,
+      longitude: locationData.location.longitude,
+      latitude: locationData.location.latitude,
+      user_id: user.id,
+    })
+    .select("id")
+    .single();
 
   if (insertError) {
     console.error("住所の保存に失敗しました。", insertError);
     throw new Error("住所情報を保存できませんでした");
+  }
+
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({
+      selected_address_id: newAddress.id,
+    })
+    .eq("id", user.id);
+
+  if (updateError) {
+    console.error("プロフィールの更新に失敗しました。", updateError);
+    throw new Error("プロフィールの更新に失敗しました。");
   }
 }
