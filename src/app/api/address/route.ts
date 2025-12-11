@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
       .eq("user_id", user.id);
 
     if (addressError) {
+      console.error("住所情報の取得に失敗", addressError);
       return NextResponse.json(
         { error: "住所情報の取得に失敗" },
         { status: 500 }
@@ -36,6 +37,27 @@ export async function GET(request: NextRequest) {
     addressList = addressData;
 
     // 選択中の住所情報をテーブルから取得
+    const { data: selectedAddressData, error: selectedAddressDataError } =
+      await supabase
+        .from("profiles")
+        .select("addresses(id,name,address_text,latitude,longitude)")
+        .eq("id", user.id)
+        .single();
+
+    if (selectedAddressDataError) {
+      console.error("プロフィール情報の取得に失敗", selectedAddressDataError);
+      return NextResponse.json(
+        { error: "プロフィール情報の取得に失敗" },
+        { status: 500 }
+      );
+    }
+
+    selectedAddress = selectedAddressData.addresses;
+
+    console.log("addressList", addressList);
+    console.log("selectedAddress", selectedAddress);
+
+    return NextResponse.json({ addressList, selectedAddress });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "例外的なエラーが発生しました。" });
