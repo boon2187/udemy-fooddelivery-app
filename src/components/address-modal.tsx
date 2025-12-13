@@ -111,7 +111,9 @@ export default function AddressModal() {
 
   return (
     <Dialog>
-      <DialogTrigger>住所を選択</DialogTrigger>
+      <DialogTrigger>
+        {data?.selectedAddress ? data.selectedAddress.name : "住所を選択"}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>住所</DialogTitle>
