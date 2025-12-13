@@ -89,7 +89,7 @@ export default function AddressModal() {
   console.log("swr_data", data);
 
   if (error) return <div>failed to load</div>;
-  if (isLoading) return <div>loading...</div>;
+  if (loading) return <div>loading...</div>;
 
   const handleSelectSuggestion = async (suggestion: AddressSuggestion) => {
     console.log("selected suggestion", suggestion);
