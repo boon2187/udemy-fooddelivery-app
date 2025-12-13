@@ -79,7 +79,15 @@ export default function AddressModal() {
     fetchSuggestions(inputText);
   }, [inputText]);
 
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error);
+    }
+    const data = await response.json();
+    return data;
+  };
 
   const {
     data,
@@ -89,7 +97,10 @@ export default function AddressModal() {
   } = useSWR<AddressResponse>(`/api/address`, fetcher);
   console.log("swr_data", data);
 
-  if (error) return <div>failed to load</div>;
+  if (error) {
+    console.error(error);
+    return <div>{error.message}</div>;
+  }
   if (loading) return <div>loading...</div>;
 
   const handleSelectSuggestion = async (suggestion: AddressSuggestion) => {
