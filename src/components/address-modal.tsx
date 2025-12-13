@@ -85,6 +85,7 @@ export default function AddressModal() {
     data,
     error,
     isLoading: loading,
+    mutate,
   } = useSWR<AddressResponse>(`/api/address`, fetcher);
   console.log("swr_data", data);
 
@@ -98,6 +99,10 @@ export default function AddressModal() {
       // 住所登録なのか、とにかくserverActionsを呼び出す
       await selectSuggestionAction(suggestion, sessionToken);
       setSessionToken(uuidv4());
+
+      //  住所を選択したら入力フォームをクリアし、データを再取得する
+      setInputText("");
+      mutate();
     } catch (error) {
       console.error(error);
       alert("予期せぬエラーが発生しました");
