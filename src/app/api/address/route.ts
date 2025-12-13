@@ -1,3 +1,4 @@
+import { Address } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -62,12 +63,4 @@ export async function GET(request: NextRequest) {
     console.error(error);
     return NextResponse.json({ error: "例外的なエラーが発生しました。" });
   }
-}
-
-interface Address {
-  id: number;
-  name: string;
-  address_text: string;
-  latitude: number;
-  longitude: number;
 }
