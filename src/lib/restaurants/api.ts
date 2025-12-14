@@ -5,6 +5,8 @@ import {
   Restaurant,
 } from "@/types";
 import { transformPlaceResults } from "./utils";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
 // 近くのレストランを取得
 export async function getRestaurants(): Promise<{
@@ -321,4 +323,42 @@ export async function getPlaceDetails(
   }
 
   return { data: results };
+}
+
+export async function fetchLocation() {
+  const DEFAULT_LOCATION = { lat: 36.2307643, lng: 137.9627271 };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  // 選択中の住所の緯度と軽度を取得
+
+  const { data: selectedAddress, error: selectedAddressError } = await supabase
+    .from("profiles")
+    .select(
+      `
+    addresses (
+      latitude,longitude
+    )
+  `
+    )
+    .eq("id", user.id)
+    .single();
+
+  if (selectedAddressError) {
+    console.error("緯度と軽度の取得に失敗しました。", selectedAddressError);
+    throw new Error("緯度と軽度の取得に失敗しました。");
+  }
+
+  const lat = selectedAddress.addresses?.latitude ?? DEFAULT_LOCATION.lat;
+  const lng = selectedAddress.addresses?.longitude ?? DEFAULT_LOCATION.lng;
+
+  return { lat, lng };
 }
