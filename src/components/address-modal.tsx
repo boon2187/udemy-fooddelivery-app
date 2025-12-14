@@ -24,9 +24,15 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { v4 as uuidv4 } from "uuid";
 import { Address, AddressSuggestion } from "@/types";
-import { AlertCircle, LoaderCircle, MapPin } from "lucide-react";
-import { selectSuggestionAction } from "@/app/(private)/actions/addressActions";
+import { AlertCircle, LoaderCircle, MapPin, Trash2 } from "lucide-react";
+import {
+  deleteAddressAction,
+  selectAddressAction,
+  selectSuggestionAction,
+} from "@/app/(private)/actions/addressActions";
 import useSWR from "swr";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 interface AddressResponse {
   addressList: Address[];
@@ -39,6 +45,7 @@ export default function AddressModal() {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const fetchSuggestions = useDebouncedCallback(async (input: string) => {
     setErrorMessage(null);
@@ -120,8 +127,36 @@ export default function AddressModal() {
     }
   };
 
+  const handleSelectAddress = async (address: Address) => {
+    console.log("selected address", address);
+
+    try {
+      await selectAddressAction(address.id);
+      mutate();
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("予期せぬエラーが発生しました");
+    }
+  };
+
+  const handleDeleteAddress = async (id: number) => {
+    console.log("delete address", id);
+    const ok = window.confirm("住所を削除しますか？");
+    if (!ok) {
+      return;
+    }
+    try {
+      await deleteAddressAction(id);
+      mutate();
+    } catch (error) {
+      console.error(error);
+      alert("予期せぬエラーが発生しました");
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogTrigger>
         {data?.selectedAddress ? data.selectedAddress.name : "住所を選択"}
       </DialogTrigger>
@@ -179,13 +214,30 @@ export default function AddressModal() {
               <>
                 <h3 className="font-bold text-lg mb-2">保存済みの住所</h3>
                 {data?.addressList.map((address) => (
-                  <CommandItem key={address.id} className="p-5">
+                  <CommandItem
+                    onSelect={() => handleSelectAddress(address)}
+                    key={address.id}
+                    className={cn(
+                      "p-5 justify-between items-center",
+                      address.id === data?.selectedAddress?.id && "bg-muted"
+                    )}
+                  >
                     <div>
                       <p className="font-bold">{address.name}</p>
                       <p className="text-muted-foreground">
                         {address.address_text}
                       </p>
                     </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAddress(address.id);
+                      }}
+                      size={"icon"}
+                      variant={"ghost"}
+                    >
+                      <Trash2 />
+                    </Button>
                   </CommandItem>
                 ))}
               </>
