@@ -9,7 +9,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
 // 近くのレストランを取得
-export async function getRestaurants(): Promise<{
+export async function getRestaurants(
+  lat: number,
+  lng: number
+): Promise<{
   data: Restaurant[];
   error?: string;
 }> {
@@ -47,8 +50,8 @@ export async function getRestaurants(): Promise<{
     locationRestriction: {
       circle: {
         center: {
-          latitude: 36.2307643,
-          longitude: 137.9627271,
+          latitude: lat,
+          longitude: lng,
         },
         radius: 500.0,
       },
@@ -91,7 +94,10 @@ export async function getRestaurants(): Promise<{
 }
 
 // 近くのラーメン店を取得
-export async function getRamenRestaurants(): Promise<{
+export async function getRamenRestaurants(
+  lat: number,
+  lng: number
+): Promise<{
   data: Restaurant[];
   error?: string;
 }> {
@@ -111,8 +117,8 @@ export async function getRamenRestaurants(): Promise<{
     locationRestriction: {
       circle: {
         center: {
-          latitude: 36.2307643,
-          longitude: 137.9627271,
+          latitude: lat,
+          longitude: lng,
         },
         radius: 500.0,
       },
