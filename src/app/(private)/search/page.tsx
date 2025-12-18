@@ -3,6 +3,7 @@ import RestaurantList from "@/components/restaurant-list";
 import Section from "@/components/section";
 import {
   fetchCategoryRestaurants,
+  fetchLocation,
   fetchRestaurantsByKeyword,
 } from "@/lib/restaurants/api";
 import { redirect } from "next/navigation";
@@ -14,9 +15,11 @@ export default async function SearchPage({
 }) {
   const { category, restaurant } = await searchParams;
 
+  const { lat, lng } = await fetchLocation();
+
   if (category) {
     const { data: categoryRestaurants, error: fetchError } =
-      await fetchCategoryRestaurants(category);
+      await fetchCategoryRestaurants(category, lat, lng);
     console.log("categoryRestaurants", categoryRestaurants);
     return (
       <>
@@ -36,7 +39,7 @@ export default async function SearchPage({
     );
   } else if (restaurant) {
     const { data: restaurants, error: fetchError } =
-      await fetchRestaurantsByKeyword(restaurant);
+      await fetchRestaurantsByKeyword(restaurant, lat, lng);
     console.log("textSearch results: restaurants", restaurants);
 
     return (

@@ -1,4 +1,5 @@
 import {
+  AddressSuggestion,
   GooglePlacesAutocompleteApiResponse,
   RestaurantSuggestion,
 } from "@/types";
@@ -8,10 +9,6 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const input = searchParams.get("input");
   const sessionToken = searchParams.get("sessionToken");
-  const lat = searchParams.get("lat");
-  const lng = searchParams.get("lng");
-  console.log("input", input);
-  console.log("sessionToken", sessionToken);
 
   if (!input) {
     return NextResponse.json(
@@ -36,15 +33,15 @@ export async function GET(request: NextRequest) {
     };
 
     const requestBody = {
-      includeQueryPredictions: true,
+      // includeQueryPredictions: true,
       input: input,
       sessionToken: sessionToken,
-      includedPrimaryTypes: ["restaurant"],
+      // includedPrimaryTypes: ["restaurant"],
       locationBias: {
         circle: {
           center: {
-            latitude: lat,
-            longitude: lng,
+            latitude: 36.2307643,
+            longitude: 137.9627271,
           },
           radius: 500.0,
         },
@@ -77,28 +74,22 @@ export async function GET(request: NextRequest) {
 
     const results = suggestions
       .map((suggestion) => {
-        if (
-          suggestion.placePrediction &&
-          suggestion.placePrediction.placeId &&
-          suggestion.placePrediction.structuredFormat?.mainText?.text
-        ) {
-          return {
-            type: "placePrediction",
-            placeId: suggestion.placePrediction.placeId,
-            placeName:
-              suggestion.placePrediction.structuredFormat?.mainText?.text,
-          };
-        } else if (
-          suggestion.queryPrediction &&
-          suggestion.queryPrediction.text?.text
-        ) {
-          return {
-            type: "queryPrediction",
-            placeName: suggestion.queryPrediction.text?.text,
-          };
-        }
+        return {
+          placeId: suggestion.placePrediction?.placeId,
+          placeName:
+            suggestion.placePrediction?.structuredFormat?.mainText?.text,
+          address_text:
+            suggestion.placePrediction?.structuredFormat?.secondaryText?.text,
+        };
       })
-      .filter((result): result is RestaurantSuggestion => result !== undefined);
+      .filter(
+        (suggestion): suggestion is AddressSuggestion =>
+          !!suggestion.placeId &&
+          !!suggestion.placeName &&
+          !!suggestion.address_text
+      );
+
+    console.log("address suggestion resluts", results);
 
     return NextResponse.json(results);
     // return NextResponse.json({ data: data });
