@@ -152,8 +152,12 @@ export default function AddressModal() {
       return;
     }
     try {
+      const selectedAddressId = data?.selectedAddress?.id;
       await deleteAddressAction(id);
       mutate();
+      if (selectedAddressId === id) {
+        router.refresh();
+      }
     } catch (error) {
       console.error(error);
       alert("予期せぬエラーが発生しました");
