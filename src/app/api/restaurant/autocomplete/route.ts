@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const input = searchParams.get("input");
   const sessionToken = searchParams.get("sessionToken");
+  const lat = searchParams.get("lat");
+  const lng = searchParams.get("lng");
   console.log("input", input);
   console.log("sessionToken", sessionToken);
 
@@ -41,8 +43,8 @@ export async function GET(request: NextRequest) {
       locationBias: {
         circle: {
           center: {
-            latitude: 36.2307643,
-            longitude: 137.9627271,
+            latitude: lat,
+            longitude: lng,
           },
           radius: 500.0,
         },

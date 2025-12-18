@@ -156,7 +156,11 @@ export async function getRamenRestaurants(
 }
 
 // カテゴリー検索機能
-export async function fetchCategoryRestaurants(category: string): Promise<{
+export async function fetchCategoryRestaurants(
+  category: string,
+  lat: number,
+  lng: number
+): Promise<{
   data: Restaurant[];
   error?: string;
 }> {
@@ -176,8 +180,8 @@ export async function fetchCategoryRestaurants(category: string): Promise<{
     locationRestriction: {
       circle: {
         center: {
-          latitude: 36.2307643,
-          longitude: 137.9627271,
+          latitude: lat,
+          longitude: lng,
         },
         radius: 500.0,
       },
@@ -217,7 +221,11 @@ export async function fetchCategoryRestaurants(category: string): Promise<{
 }
 
 // キーワード検索機能
-export async function fetchRestaurantsByKeyword(query: string) {
+export async function fetchRestaurantsByKeyword(
+  query: string,
+  lat: number,
+  lng: number
+) {
   const url = "https://places.googleapis.com/v1/places:searchText";
 
   const apiKey = process.env.GOOGLE_API_KEY;
@@ -234,8 +242,8 @@ export async function fetchRestaurantsByKeyword(query: string) {
     locationBias: {
       circle: {
         center: {
-          latitude: 36.2307643,
-          longitude: 137.9627271,
+          latitude: lat,
+          longitude: lng,
         },
         radius: 500.0,
       },

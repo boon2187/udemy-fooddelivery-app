@@ -14,7 +14,12 @@ import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
 
-export default function PlaceSearchBar() {
+interface PlaceSearchBarProps {
+  lat: number;
+  lng: number;
+}
+
+export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [sessionToken, setSessionToken] = useState(uuidv4());
@@ -35,7 +40,7 @@ export default function PlaceSearchBar() {
       }
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
       const response = await fetch(
-        `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}`
+        `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`
       );
 
       if (!response.ok) {

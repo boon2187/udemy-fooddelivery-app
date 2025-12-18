@@ -124,6 +124,7 @@ export default function AddressModal() {
       //  住所を選択したら入力フォームをクリアし、データを再取得する
       setInputText("");
       mutate();
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert("予期せぬエラーが発生しました");
