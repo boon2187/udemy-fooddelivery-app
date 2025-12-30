@@ -1,8 +1,24 @@
 import { Button } from "@/components/ui/button";
+import { getPlaceDetails } from "@/lib/restaurants/api";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 
-export default async function RestaurantPage() {
+export default async function RestaurantPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ restaurantId: string }>;
+  searchParams: Promise<{ sessionToken: string }>;
+}) {
+  const { restaurantId } = await params;
+  const { sessionToken } = await searchParams;
+  console.log("restaurantId", restaurantId);
+  console.log("sessionToken", sessionToken);
+  await getPlaceDetails(
+    restaurantId,
+    ["displayName","photos","primaryType"],
+    sessionToken
+  );
   return (
     <div>
       <div className="h-64 rounded-xl shadow-md relative overflow-hidden">
