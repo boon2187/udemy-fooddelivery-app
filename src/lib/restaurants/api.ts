@@ -342,7 +342,7 @@ export async function getPlaceDetails(
   if (fields.includes("primaryType") && data.primaryType) {
     results.primaryType = data.primaryType;
   }
-  if (fields.includes("photos") && data.photos) {
+  if (fields.includes("photos")) {
     results.photoUrl = data.photos?.[0]?.name
       ? await getPhotoUrl(data.photos[0].name)
       : "/no_image.png";
