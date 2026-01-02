@@ -11,10 +11,19 @@ export interface GooglePlacesSearchApiResponse {
 
 export interface GooglePlacesDetailsApiResponse {
   location?: { latitude?: number; longitude?: number };
+  displayName?: {
+    languageCode?: string;
+    text?: string;
+  };
+  primaryType?: string;
+  photos?: PlacePhoto[];
 }
 
 export interface PlaceDetailsAll {
   location?: { latitude?: number; longitude?: number };
+  displayName?: string;
+  primaryType?: string;
+  photoUrl?: string;
 }
 
 export interface PlaceSearchResult {

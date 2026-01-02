@@ -7,6 +7,7 @@ import {
 import { transformPlaceResults } from "./utils";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { get } from "http";
 
 // 近くのレストランを取得
 export async function getRestaurants(
@@ -335,7 +336,19 @@ export async function getPlaceDetails(
   if (fields.includes("location") && data.location) {
     results.location = data.location;
   }
+  if (fields.includes("displayName") && data.displayName?.text) {
+    results.displayName = data.displayName.text;
+  }
+  if (fields.includes("primaryType") && data.primaryType) {
+    results.primaryType = data.primaryType;
+  }
+  if (fields.includes("photos") && data.photos) {
+    results.photoUrl = data.photos?.[0]?.name
+      ? await getPhotoUrl(data.photos[0].name)
+      : "/no_image.png";
+  }
 
+  console.log("placeDetails results", results);
   return { data: results };
 }
 
