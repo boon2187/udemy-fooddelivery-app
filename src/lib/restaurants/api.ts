@@ -344,7 +344,7 @@ export async function getPlaceDetails(
   }
   if (fields.includes("photos")) {
     results.photoUrl = data.photos?.[0]?.name
-      ? await getPhotoUrl(data.photos[0].name)
+      ? await getPhotoUrl(data.photos[0].name, 1200)
       : "/no_image.png";
   }
 
