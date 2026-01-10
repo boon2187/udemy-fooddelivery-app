@@ -40,7 +40,7 @@ export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
       }
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
       const response = await fetch(
-        `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`
+        `/api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`
       );
 
       if (!response.ok) {
