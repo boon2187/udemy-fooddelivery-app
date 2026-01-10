@@ -1,0 +1,61 @@
+import { createClient } from "@/utils/supabase/server";
+
+export async function fetchCategoryMenus(primaryType: string) {
+  console.log("Fetching menus for category:", primaryType);
+
+  const supabase = await createClient();
+
+  const { data: menus, error: menusError } = await supabase
+    .from("menus")
+    .select("*")
+    .eq("genre", primaryType);
+
+  if (menusError) {
+    console.error("メニューの取得に失敗しました", menusError);
+    return { error: "メニューの取得に失敗しました" };
+  }
+
+  // 取得したprimaryTypeがmenusに存在しなくてエラとなった場合の処理
+  if (!menus || menus.length === 0) {
+    return { data: [] };
+  }
+
+  const categoryMenus = [];
+
+  const featuredItems = menus
+    .filter((menu) => menu.is_featured)
+    .map((menu) => ({
+      id: menu.id,
+      photoUrl: supabase.storage.from("menus").getPublicUrl(menu.image_path)
+        .data.publicUrl,
+      name: menu.name,
+      price: menu.price,
+    }));
+
+  categoryMenus.push({
+    id: "featured",
+    category: "注目商品",
+    items: featuredItems,
+  });
+
+  const categories = Array.from(new Set(menus.map((menu) => menu.category)));
+  for (const category of categories) {
+    const items = menus
+      .filter((menu) => menu.category === category)
+      .map((menu) => ({
+        id: menu.id,
+        photoUrl: supabase.storage.from("menus").getPublicUrl(menu.image_path)
+          .data.publicUrl,
+        name: menu.name,
+        price: menu.price,
+      }));
+
+    categoryMenus.push({
+      id: category,
+      category: category,
+      items: items,
+    });
+  }
+  console.log("Category Menus:", categoryMenus);
+  return { data: categoryMenus };
+}
