@@ -83,3 +83,16 @@ export interface Address {
   latitude: number;
   longitude: number;
 }
+
+export interface CategoryMenu {
+  categoryName: string;
+  id: string;
+  items: Menu[];
+}
+
+export interface Menu {
+  id: number;
+  name: string;
+  photoUrl: string;
+  price: number;
+}
