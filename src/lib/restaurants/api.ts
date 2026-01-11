@@ -343,9 +343,10 @@ export async function getPlaceDetails(
     results.primaryType = data.primaryType;
   }
   if (fields.includes("photos")) {
-    results.photoUrl = data.photos?.[0]?.name
-      ? await getPhotoUrl(data.photos[0].name, 1200)
-      : "/no_image.png";
+    // results.photoUrl = data.photos?.[0]?.name
+    //   ? await getPhotoUrl(data.photos[0].name, 1200)
+    //   : "/no_image.png";
+    results.photoUrl = "/no_image.png";
   }
 
   console.log("placeDetails results", results);
