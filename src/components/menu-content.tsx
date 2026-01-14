@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import CategorySidebar from "./category-sidebar";
 import { CategoryMenu } from "@/types";
@@ -11,9 +13,16 @@ interface MenuContentProps {
 }
 
 export default function MenuContent({ categoryMenus }: MenuContentProps) {
+  const handleSelectCategory = (categoryId: string) => {
+    console.log("Selected category ID:", categoryId);
+  };
+
   return (
     <div className="flex gap-4">
-      <CategorySidebar categoryMenus={categoryMenus} />
+      <CategorySidebar
+        categoryMenus={categoryMenus}
+        onSelectCategory={handleSelectCategory}
+      />
       <div className="w-3/4 bg-blue-400">
         {categoryMenus.map((category) => (
           <Section key={category.id} title={category.categoryName}>
