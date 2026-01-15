@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import CategorySidebar from "./category-sidebar";
 import { CategoryMenu } from "@/types";
 import Section from "./section";
@@ -13,6 +13,8 @@ interface MenuContentProps {
 }
 
 export default function MenuContent({ categoryMenus }: MenuContentProps) {
+  const [activeCategoryId, setActiveCategoryId] = useState(categoryMenus[0].id);
+
   const handleSelectCategory = (categoryId: string) => {
     console.log("Selected category ID:", categoryId);
     const element = document.getElementById(`${categoryId}-menu`);
@@ -27,6 +29,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
       <CategorySidebar
         categoryMenus={categoryMenus}
         onSelectCategory={handleSelectCategory}
+        acitiveCategoryId={activeCategoryId}
       />
       <div className="w-3/4 bg-blue-400">
         {categoryMenus.map((category) => (
