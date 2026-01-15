@@ -7,6 +7,7 @@ import Section from "./section";
 import CarouselContainer from "./carousel-container";
 import MenuCard from "./menu-card";
 import FlatMenuCard from "./flat-menu-card";
+import { InView } from "react-intersection-observer";
 
 interface MenuContentProps {
   categoryMenus: CategoryMenu[];
@@ -33,10 +34,15 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
       />
       <div className="w-3/4 bg-blue-400">
         {categoryMenus.map((category) => (
-          <div
-            key={category.id}
+          <InView
             id={`${category.id}-menu`}
             className="scroll-mt-16"
+            key={category.id}
+            as="div"
+            threshold={0.7}
+            onChange={(inView, entry) =>
+              inView && setActiveCategoryId(category.id)
+            }
           >
             <Section title={category.categoryName}>
               {category.id === "featured" ? (
@@ -53,7 +59,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
                 </div>
               )}
             </Section>
-          </div>
+          </InView>
         ))}
       </div>
     </div>
