@@ -1,98 +1,98 @@
 export interface Restaurant {
-    id: string;
-    restaurantName?: string;
-    primaryType?: string;
-    photoUrl: string;
+  id: string;
+  restaurantName?: string;
+  primaryType?: string;
+  photoUrl: string;
 }
 
 export interface GooglePlacesSearchApiResponse {
-    places?: PlaceSearchResult[];
+  places?: PlaceSearchResult[];
 }
 
 export interface GooglePlacesDetailsApiResponse {
-    location?: { latitude?: number; longitude?: number };
-    displayName?: {
-        languageCode?: string;
-        text?: string;
-    };
-    primaryType?: string;
-    photos?: PlacePhoto[];
+  location?: { latitude?: number; longitude?: number };
+  displayName?: {
+    languageCode?: string;
+    text?: string;
+  };
+  primaryType?: string;
+  photos?: PlacePhoto[];
 }
 
 export interface PlaceDetailsAll {
-    location?: { latitude?: number; longitude?: number };
-    displayName?: string;
-    primaryType?: string;
-    photoUrl?: string;
+  location?: { latitude?: number; longitude?: number };
+  displayName?: string;
+  primaryType?: string;
+  photoUrl?: string;
 }
 
 export interface PlaceSearchResult {
-    id: string;
-    displayName?: {
-        languageCode?: string;
-        text?: string;
-    };
-    primaryType?: string;
-    photos?: PlacePhoto[];
+  id: string;
+  displayName?: {
+    languageCode?: string;
+    text?: string;
+  };
+  primaryType?: string;
+  photos?: PlacePhoto[];
 }
 
 export interface PlacePhoto {
-    name?: string;
+  name?: string;
 }
 
 export interface GooglePlacesAutocompleteApiResponse {
-    suggestions?: PlaceAutocompleteResult[];
+  suggestions?: PlaceAutocompleteResult[];
 }
 
 export interface PlaceAutocompleteResult {
-    placePrediction?: {
-        place?: string;
-        placeId?: string;
-        structuredFormat?: {
-            mainText?: {
-                text?: string;
-            };
-            secondaryText?: {
-                text?: string;
-            };
-        };
+  placePrediction?: {
+    place?: string;
+    placeId?: string;
+    structuredFormat?: {
+      mainText?: {
+        text?: string;
+      };
+      secondaryText?: {
+        text?: string;
+      };
     };
-    queryPrediction?: {
-        text?: {
-            text?: string;
-        };
+  };
+  queryPrediction?: {
+    text?: {
+      text?: string;
     };
+  };
 }
 
 export interface RestaurantSuggestion {
-    type: string;
-    placeId?: string;
-    placeName: string;
+  type: string;
+  placeId?: string;
+  placeName: string;
 }
 
 export interface AddressSuggestion {
-    placeId: string;
-    placeName: string;
-    address_text: string;
+  placeId: string;
+  placeName: string;
+  address_text: string;
 }
 
 export interface Address {
-    id: number;
-    name: string;
-    address_text: string;
-    latitude: number;
-    longitude: number;
+  id: number;
+  name: string;
+  address_text: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface CategoryMenu {
-    categoryName: string;
-    id: string;
-    items: Menu[];
+  categoryName: string;
+  id: string;
+  items: Menu[];
 }
 
 export interface Menu {
-    id: number;
-    name: string;
-    photoUrl: string;
-    price: number;
+  id: number;
+  name: string;
+  photoUrl: string;
+  price: number;
 }

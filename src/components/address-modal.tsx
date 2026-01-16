@@ -1,23 +1,23 @@
 "use client";
 
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    Command,
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-    CommandSeparator,
-    CommandShortcut,
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -26,9 +26,9 @@ import { v4 as uuidv4 } from "uuid";
 import { Address, AddressSuggestion } from "@/types";
 import { AlertCircle, LoaderCircle, MapPin, Trash2 } from "lucide-react";
 import {
-    deleteAddressAction,
-    selectAddressAction,
-    selectSuggestionAction,
+  deleteAddressAction,
+  selectAddressAction,
+  selectSuggestionAction,
 } from "@/app/(private)/actions/addressActions";
 import useSWR from "swr";
 import { cn } from "@/lib/utils";
@@ -36,222 +36,218 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 
 interface AddressResponse {
-    addressList: Address[];
-    selectedAddress: Address;
+  addressList: Address[];
+  selectedAddress: Address;
 }
 
 export default function AddressModal() {
-    const [inputText, setInputText] = useState("");
-    const [sessionToken, setSessionToken] = useState(uuidv4());
-    const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [open, setOpen] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [sessionToken, setSessionToken] = useState(uuidv4());
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const fetchSuggestions = useDebouncedCallback(async (input: string) => {
-        setErrorMessage(null);
-        // console.log("inputText", inputText);
-        try {
-            if (!input.trim()) {
-                setSuggestions([]);
-                return;
-            }
-            // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
-            const response = await fetch(
-                `api/address/autocomplete?input=${inputText}&sessionToken=${sessionToken}`,
-            );
+  const fetchSuggestions = useDebouncedCallback(async (input: string) => {
+    setErrorMessage(null);
+    // console.log("inputText", inputText);
+    try {
+      if (!input.trim()) {
+        setSuggestions([]);
+        return;
+      }
+      // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
+      const response = await fetch(
+        `api/address/autocomplete?input=${inputText}&sessionToken=${sessionToken}`,
+      );
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                setErrorMessage(errorData.error);
-                return;
-            }
-            const data: AddressSuggestion[] = await response.json();
-            console.log("suggestions data", data);
-            setSuggestions(data);
-        } catch (error) {
-            console.error("Error fetching suggestions:", error);
-            setErrorMessage("予期せぬエラーが発生しました");
-        } finally {
-            setIsLoading(false);
-        }
-    }, 500);
-
-    // 入力が合った時にサジェスチョンを得るAPIを呼ぶ
-    useEffect(() => {
-        if (!inputText.trim()) {
-            setSuggestions([]);
-            return;
-        }
-        setIsLoading(true);
-        fetchSuggestions(inputText);
-    }, [inputText]);
-
-    const fetcher = async (url: string) => {
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error);
-        }
-        const data = await response.json();
-        return data;
-    };
-
-    const {
-        data,
-        error,
-        isLoading: loading,
-        mutate,
-    } = useSWR<AddressResponse>(`/api/address`, fetcher);
-    console.log("swr_data", data);
-
-    if (error) {
-        console.error(error);
-        return <div>{error.message}</div>;
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error);
+        return;
+      }
+      const data: AddressSuggestion[] = await response.json();
+      console.log("suggestions data", data);
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setErrorMessage("予期せぬエラーが発生しました");
+    } finally {
+      setIsLoading(false);
     }
-    if (loading) return <div>loading...</div>;
+  }, 500);
 
-    const handleSelectSuggestion = async (suggestion: AddressSuggestion) => {
-        console.log("selected suggestion", suggestion);
+  // 入力が合った時にサジェスチョンを得るAPIを呼ぶ
+  useEffect(() => {
+    if (!inputText.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    setIsLoading(true);
+    fetchSuggestions(inputText);
+  }, [inputText]);
 
-        try {
-            // 住所登録なのか、とにかくserverActionsを呼び出す
-            await selectSuggestionAction(suggestion, sessionToken);
-            setSessionToken(uuidv4());
+  const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error);
+    }
+    const data = await response.json();
+    return data;
+  };
 
-            //  住所を選択したら入力フォームをクリアし、データを再取得する
-            setInputText("");
-            mutate();
-            router.refresh();
-        } catch (error) {
-            console.error(error);
-            alert("予期せぬエラーが発生しました");
-        }
-    };
+  const {
+    data,
+    error,
+    isLoading: loading,
+    mutate,
+  } = useSWR<AddressResponse>(`/api/address`, fetcher);
+  console.log("swr_data", data);
 
-    const handleSelectAddress = async (address: Address) => {
-        console.log("selected address", address);
+  if (error) {
+    console.error(error);
+    return <div>{error.message}</div>;
+  }
+  if (loading) return <div>loading...</div>;
 
-        try {
-            await selectAddressAction(address.id);
-            mutate();
-            setOpen(false);
-            router.refresh();
-        } catch (error) {
-            console.error(error);
-            alert("予期せぬエラーが発生しました");
-        }
-    };
+  const handleSelectSuggestion = async (suggestion: AddressSuggestion) => {
+    console.log("selected suggestion", suggestion);
 
-    const handleDeleteAddress = async (id: number) => {
-        console.log("delete address", id);
-        const ok = window.confirm("住所を削除しますか？");
-        if (!ok) {
-            return;
-        }
-        try {
-            const selectedAddressId = data?.selectedAddress?.id;
-            await deleteAddressAction(id);
-            mutate();
-            if (selectedAddressId === id) {
-                router.refresh();
-            }
-        } catch (error) {
-            console.error(error);
-            alert("予期せぬエラーが発生しました");
-        }
-    };
+    try {
+      // 住所登録なのか、とにかくserverActionsを呼び出す
+      await selectSuggestionAction(suggestion, sessionToken);
+      setSessionToken(uuidv4());
 
-    return (
-        <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-            <DialogTrigger>
-                {data?.selectedAddress ? data.selectedAddress.name : "住所を選択"}
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>住所</DialogTitle>
-                    <DialogDescription className="sr-only">住所登録と選択</DialogDescription>
-                </DialogHeader>
-                <Command shouldFilter={false}>
-                    <div className="bg-muted mb-4">
-                        <CommandInput
-                            value={inputText}
-                            onValueChange={setInputText}
-                            placeholder="Type a command or search..."
-                        />
+      //  住所を選択したら入力フォームをクリアし、データを再取得する
+      setInputText("");
+      mutate();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert("予期せぬエラーが発生しました");
+    }
+  };
+
+  const handleSelectAddress = async (address: Address) => {
+    console.log("selected address", address);
+
+    try {
+      await selectAddressAction(address.id);
+      mutate();
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert("予期せぬエラーが発生しました");
+    }
+  };
+
+  const handleDeleteAddress = async (id: number) => {
+    console.log("delete address", id);
+    const ok = window.confirm("住所を削除しますか？");
+    if (!ok) {
+      return;
+    }
+    try {
+      const selectedAddressId = data?.selectedAddress?.id;
+      await deleteAddressAction(id);
+      mutate();
+      if (selectedAddressId === id) {
+        router.refresh();
+      }
+    } catch (error) {
+      console.error(error);
+      alert("予期せぬエラーが発生しました");
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+      <DialogTrigger>
+        {data?.selectedAddress ? data.selectedAddress.name : "住所を選択"}
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>住所</DialogTitle>
+          <DialogDescription className="sr-only">住所登録と選択</DialogDescription>
+        </DialogHeader>
+        <Command shouldFilter={false}>
+          <div className="bg-muted mb-4">
+            <CommandInput
+              value={inputText}
+              onValueChange={setInputText}
+              placeholder="Type a command or search..."
+            />
+          </div>
+          <CommandList>
+            {inputText ? (
+              // サジェスチョンを表示
+              <>
+                <CommandEmpty>
+                  <div className="flex items-center justify-center">
+                    {isLoading ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : errorMessage ? (
+                      <div>
+                        <AlertCircle />
+                        {errorMessage}
+                      </div>
+                    ) : (
+                      "住所が見つかりません"
+                    )}
+                  </div>
+                </CommandEmpty>
+                {suggestions.map((suggestion) => (
+                  <CommandItem
+                    onSelect={() => handleSelectSuggestion(suggestion)}
+                    key={suggestion.placeId}
+                    className="p-5"
+                  >
+                    <MapPin />
+                    <div>
+                      <p className="font-bold">{suggestion.placeName}</p>
+                      <p className="text-muted-foreground">{suggestion.address_text}</p>
                     </div>
-                    <CommandList>
-                        {inputText ? (
-                            // サジェスチョンを表示
-                            <>
-                                <CommandEmpty>
-                                    <div className="flex items-center justify-center">
-                                        {isLoading ? (
-                                            <LoaderCircle className="animate-spin" />
-                                        ) : errorMessage ? (
-                                            <div>
-                                                <AlertCircle />
-                                                {errorMessage}
-                                            </div>
-                                        ) : (
-                                            "住所が見つかりません"
-                                        )}
-                                    </div>
-                                </CommandEmpty>
-                                {suggestions.map((suggestion) => (
-                                    <CommandItem
-                                        onSelect={() => handleSelectSuggestion(suggestion)}
-                                        key={suggestion.placeId}
-                                        className="p-5"
-                                    >
-                                        <MapPin />
-                                        <div>
-                                            <p className="font-bold">{suggestion.placeName}</p>
-                                            <p className="text-muted-foreground">
-                                                {suggestion.address_text}
-                                            </p>
-                                        </div>
-                                    </CommandItem>
-                                ))}
-                            </>
-                        ) : (
-                            // 保存済みの住所を表示
-                            <>
-                                <h3 className="font-bold text-lg mb-2">保存済みの住所</h3>
-                                {data?.addressList.map((address) => (
-                                    <CommandItem
-                                        onSelect={() => handleSelectAddress(address)}
-                                        key={address.id}
-                                        className={cn(
-                                            "p-5 justify-between items-center",
-                                            address.id === data?.selectedAddress?.id && "bg-muted",
-                                        )}
-                                    >
-                                        <div>
-                                            <p className="font-bold">{address.name}</p>
-                                            <p className="text-muted-foreground">
-                                                {address.address_text}
-                                            </p>
-                                        </div>
-                                        <Button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDeleteAddress(address.id);
-                                            }}
-                                            size={"icon"}
-                                            variant={"ghost"}
-                                        >
-                                            <Trash2 />
-                                        </Button>
-                                    </CommandItem>
-                                ))}
-                            </>
-                        )}
-                    </CommandList>
-                </Command>
-            </DialogContent>
-        </Dialog>
-    );
+                  </CommandItem>
+                ))}
+              </>
+            ) : (
+              // 保存済みの住所を表示
+              <>
+                <h3 className="font-bold text-lg mb-2">保存済みの住所</h3>
+                {data?.addressList.map((address) => (
+                  <CommandItem
+                    onSelect={() => handleSelectAddress(address)}
+                    key={address.id}
+                    className={cn(
+                      "p-5 justify-between items-center",
+                      address.id === data?.selectedAddress?.id && "bg-muted",
+                    )}
+                  >
+                    <div>
+                      <p className="font-bold">{address.name}</p>
+                      <p className="text-muted-foreground">{address.address_text}</p>
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAddress(address.id);
+                      }}
+                      size={"icon"}
+                      variant={"ghost"}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </CommandItem>
+                ))}
+              </>
+            )}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
+  );
 }
