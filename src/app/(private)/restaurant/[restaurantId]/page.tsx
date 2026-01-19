@@ -12,10 +12,10 @@ export default async function RestaurantPage({
   searchParams,
 }: {
   params: Promise<{ restaurantId: string }>;
-  searchParams: Promise<{ sessionToken: string }>;
+  searchParams: Promise<{ sessionToken: string; searchMenu: string }>;
 }) {
   const { restaurantId } = await params;
-  const { sessionToken } = await searchParams;
+  const { sessionToken, searchMenu } = await searchParams;
   console.log("restaurantId", restaurantId);
   console.log("sessionToken", sessionToken);
   const { data: restaurant, error } = await getPlaceDetails(
@@ -29,7 +29,7 @@ export default async function RestaurantPage({
   console.log("primaryType", primaryType);
 
   const { data: categoryMenus, error: menusError } = primaryType
-    ? await fetchCategoryMenus(primaryType)
+    ? await fetchCategoryMenus(primaryType, searchMenu)
     : { data: [] };
   console.log("カテゴリー別メニュー", categoryMenus);
 
