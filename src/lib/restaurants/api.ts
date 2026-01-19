@@ -7,6 +7,7 @@ import {
 import { transformPlaceResults } from "./utils";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { get } from "http";
 
 // 近くのレストランを取得
 export async function getRestaurants(
@@ -23,8 +24,7 @@ export async function getRestaurants(
   const header = {
     "Content-Type": "application/json",
     "X-Goog-Api-key": apiKey!,
-    "X-Goog-FieldMask":
-      "places.id,places.displayName,places.primaryType,places.photos",
+    "X-Goog-FieldMask": "places.id,places.displayName,places.primaryType,places.photos",
   };
 
   const desiredTypes = [
@@ -107,8 +107,7 @@ export async function getRamenRestaurants(
   const header = {
     "Content-Type": "application/json",
     "X-Goog-Api-key": apiKey!,
-    "X-Goog-FieldMask":
-      "places.id,places.displayName,places.primaryType,places.photos",
+    "X-Goog-FieldMask": "places.id,places.displayName,places.primaryType,places.photos",
   };
 
   const requestBody = {
@@ -170,8 +169,7 @@ export async function fetchCategoryRestaurants(
   const header = {
     "Content-Type": "application/json",
     "X-Goog-Api-key": apiKey!,
-    "X-Goog-FieldMask":
-      "places.id,places.displayName,places.primaryType,places.photos",
+    "X-Goog-FieldMask": "places.id,places.displayName,places.primaryType,places.photos",
   };
 
   const requestBody = {
@@ -213,27 +211,20 @@ export async function fetchCategoryRestaurants(
   }
   const nearbyCategoryRestaurants = data.places;
 
-  const categoryRestaurants = await transformPlaceResults(
-    nearbyCategoryRestaurants
-  );
+  const categoryRestaurants = await transformPlaceResults(nearbyCategoryRestaurants);
   console.log("categoryRestaurants", categoryRestaurants);
   return { data: categoryRestaurants };
 }
 
 // キーワード検索機能
-export async function fetchRestaurantsByKeyword(
-  query: string,
-  lat: number,
-  lng: number
-) {
+export async function fetchRestaurantsByKeyword(query: string, lat: number, lng: number) {
   const url = "https://places.googleapis.com/v1/places:searchText";
 
   const apiKey = process.env.GOOGLE_API_KEY;
   const header = {
     "Content-Type": "application/json",
     "X-Goog-Api-key": apiKey!,
-    "X-Goog-FieldMask":
-      "places.id,places.displayName,places.primaryType,places.photos",
+    "X-Goog-FieldMask": "places.id,places.displayName,places.primaryType,places.photos",
   };
 
   const requestBody = {
@@ -288,11 +279,7 @@ export async function getPhotoUrl(name: string, maxWidth = 400) {
   return url;
 }
 
-export async function getPlaceDetails(
-  placeId: string,
-  fields: string[],
-  sessionToken?: string
-) {
+export async function getPlaceDetails(placeId: string, fields: string[], sessionToken?: string) {
   console.log("fields", fields);
 
   const fieldsParam = fields.join(",");
@@ -335,7 +322,20 @@ export async function getPlaceDetails(
   if (fields.includes("location") && data.location) {
     results.location = data.location;
   }
+  if (fields.includes("displayName") && data.displayName?.text) {
+    results.displayName = data.displayName.text;
+  }
+  if (fields.includes("primaryType") && data.primaryType) {
+    results.primaryType = data.primaryType;
+  }
+  if (fields.includes("photos")) {
+    // results.photoUrl = data.photos?.[0]?.name
+    //   ? await getPhotoUrl(data.photos[0].name, 1200)
+    //   : "/no_image.png";
+    results.photoUrl = "/no_image.png";
+  }
 
+  console.log("placeDetails results", results);
   return { data: results };
 }
 

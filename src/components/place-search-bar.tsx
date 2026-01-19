@@ -40,7 +40,7 @@ export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
       }
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
       const response = await fetch(
-        `api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`
+        `/api/restaurant/autocomplete?input=${inputText}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`,
       );
 
       if (!response.ok) {
@@ -88,9 +88,7 @@ export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
     console.log("suggestion", suggestion);
 
     if (suggestion.type === "placePrediction") {
-      router.push(
-        `restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`
-      );
+      router.push(`restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`);
       // 同じセッショントークンを使いまわしできないので、セッショントークンを更新
       setSessionToken(uuidv4());
     } else {
@@ -108,11 +106,7 @@ export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
   };
 
   return (
-    <Command
-      className="overflow-visible bg-muted"
-      onKeyDown={handleKeyDown}
-      shouldFilter={false}
-    >
+    <Command className="overflow-visible bg-muted" onKeyDown={handleKeyDown} shouldFilter={false}>
       <CommandInput
         value={inputText}
         placeholder="Type a command or search..."
@@ -145,11 +139,7 @@ export default function PlaceSearchBar({ lat, lng }: PlaceSearchBarProps) {
                 onSelect={() => handleSelectSuggestion(suggestion)}
                 onMouseDown={() => (clickedOnItem.current = true)}
               >
-                {suggestion.type === "queryPrediction" ? (
-                  <Search />
-                ) : (
-                  <MapPin />
-                )}
+                {suggestion.type === "queryPrediction" ? <Search /> : <MapPin />}
                 <p>{suggestion.placeName}</p>
               </CommandItem>
             ))}

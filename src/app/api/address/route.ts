@@ -15,10 +15,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json(
-        { error: "ユーザーが認証されていません。" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "ユーザーが認証されていません。" }, { status: 401 });
     }
 
     // 住所情報をテーブルから取得
@@ -29,28 +26,21 @@ export async function GET(request: NextRequest) {
 
     if (addressError) {
       console.error("住所情報の取得に失敗", addressError);
-      return NextResponse.json(
-        { error: "住所情報の取得に失敗" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "住所情報の取得に失敗" }, { status: 500 });
     }
 
     addressList = addressData;
 
     // 選択中の住所情報をテーブルから取得
-    const { data: selectedAddressData, error: selectedAddressDataError } =
-      await supabase
-        .from("profiles")
-        .select("addresses(id,name,address_text,latitude,longitude)")
-        .eq("id", user.id)
-        .single();
+    const { data: selectedAddressData, error: selectedAddressDataError } = await supabase
+      .from("profiles")
+      .select("addresses(id,name,address_text,latitude,longitude)")
+      .eq("id", user.id)
+      .single();
 
     if (selectedAddressDataError) {
       console.error("プロフィール情報の取得に失敗", selectedAddressDataError);
-      return NextResponse.json(
-        { error: "プロフィール情報の取得に失敗" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "プロフィール情報の取得に失敗" }, { status: 500 });
     }
 
     selectedAddress = selectedAddressData.addresses;

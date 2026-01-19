@@ -12,10 +12,7 @@ interface CarouselContainerProps {
   slideNumber: number;
 }
 
-export default function CarouselContainer({
-  children,
-  slideNumber,
-}: CarouselContainerProps) {
+export default function CarouselContainer({ children, slideNumber }: CarouselContainerProps) {
   return (
     <Carousel
       opts={{
@@ -25,10 +22,7 @@ export default function CarouselContainer({
     >
       <CarouselContent>
         {children.map((child, index) => (
-          <CarouselItem
-            key={index}
-            style={{ flexBasis: `${100 / slideNumber}%` }}
-          >
+          <CarouselItem key={index} style={{ flexBasis: `${100 / slideNumber}%` }}>
             <div className="p-1">{child}</div>
           </CarouselItem>
         ))}

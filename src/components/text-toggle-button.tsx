@@ -7,9 +7,5 @@ export default function TextToggleButton() {
   const handleChange = () => {
     setIsExpandes((prev) => !prev);
   };
-  return (
-    <Button onClick={handleChange}>
-      {isExpanded ? "表示を戻す" : "すべて表示"}
-    </Button>
-  );
+  return <Button onClick={handleChange}>{isExpanded ? "表示を戻す" : "すべて表示"}</Button>;
 }

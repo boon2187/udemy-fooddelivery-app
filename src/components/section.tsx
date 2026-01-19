@@ -9,11 +9,7 @@ interface SectionProps {
   expandedContent?: ReactNode;
 }
 
-export default function Section({
-  children,
-  title,
-  expandedContent,
-}: SectionProps) {
+export default function Section({ children, title, expandedContent }: SectionProps) {
   const [isExpanded, setIsExpandes] = useState(false);
   const handleChange = () => {
     setIsExpandes((prev) => !prev);
@@ -22,9 +18,9 @@ export default function Section({
     <section>
       <div className="flex items-center justify-between py-4">
         <h2 className="text-2xl font-bold">{title}</h2>
-        <Button onClick={handleChange}>
-          {isExpanded ? "表示を戻す" : "すべて表示"}
-        </Button>
+        {expandedContent && (
+          <Button onClick={handleChange}>{isExpanded ? "表示を戻す" : "すべて表示"}</Button>
+        )}
       </div>
       {isExpanded ? expandedContent : children}
     </section>

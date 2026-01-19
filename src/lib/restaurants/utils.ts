@@ -11,7 +11,7 @@ export async function transformPlaceResults(restaurants: PlaceSearchResult[]) {
       //   ? await getPhotoUrl(restaurant.photos[0].name)
       //   : "/no_image.png",
       photoUrl: "/no_image.png",
-    })
+    }),
   );
   const data = await Promise.all(promises);
   return data;

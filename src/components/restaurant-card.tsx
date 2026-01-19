@@ -10,7 +10,7 @@ interface RestaurantCardProps {
 export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
     <div className="relative">
-      <Link href={"/abc"} className="inset-0 absolute z-10"></Link>
+      <Link href={`/restaurant/${restaurant.id}`} className="inset-0 absolute z-10"></Link>
       <div className="relative aspect-video rounded-lg overflow-hidden">
         <Image
           className="object-cover"

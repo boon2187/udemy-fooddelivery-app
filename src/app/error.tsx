@@ -22,9 +22,7 @@ export default function Error({
             <AlertCircle className="h-10 w-10 text-green-600" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800">
-          操作中に問題が発生しました
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-800">操作中に問題が発生しました</h2>
         <p className="text-gray-600">
           ご注文の操作中にエラーが発生しました。もう一度お試しいただけますか？
         </p>

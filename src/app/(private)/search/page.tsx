@@ -18,8 +18,11 @@ export default async function SearchPage({
   const { lat, lng } = await fetchLocation();
 
   if (category) {
-    const { data: categoryRestaurants, error: fetchError } =
-      await fetchCategoryRestaurants(category, lat, lng);
+    const { data: categoryRestaurants, error: fetchError } = await fetchCategoryRestaurants(
+      category,
+      lat,
+      lng,
+    );
     console.log("categoryRestaurants", categoryRestaurants);
     return (
       <>
@@ -38,8 +41,11 @@ export default async function SearchPage({
       </>
     );
   } else if (restaurant) {
-    const { data: restaurants, error: fetchError } =
-      await fetchRestaurantsByKeyword(restaurant, lat, lng);
+    const { data: restaurants, error: fetchError } = await fetchRestaurantsByKeyword(
+      restaurant,
+      lat,
+      lng,
+    );
     console.log("textSearch results: restaurants", restaurants);
 
     return (

@@ -11,10 +11,19 @@ export interface GooglePlacesSearchApiResponse {
 
 export interface GooglePlacesDetailsApiResponse {
   location?: { latitude?: number; longitude?: number };
+  displayName?: {
+    languageCode?: string;
+    text?: string;
+  };
+  primaryType?: string;
+  photos?: PlacePhoto[];
 }
 
 export interface PlaceDetailsAll {
   location?: { latitude?: number; longitude?: number };
+  displayName?: string;
+  primaryType?: string;
+  photoUrl?: string;
 }
 
 export interface PlaceSearchResult {
@@ -73,4 +82,17 @@ export interface Address {
   address_text: string;
   latitude: number;
   longitude: number;
+}
+
+export interface CategoryMenu {
+  categoryName: string;
+  id: string;
+  items: Menu[];
+}
+
+export interface Menu {
+  id: number;
+  name: string;
+  photoUrl: string;
+  price: number;
 }

@@ -60,7 +60,7 @@ export default function AddressModal() {
       }
       // APIを呼び出すー＞ APIキーがあるので、サーバーサイド・RouteHandlersでAPIを呼び出す
       const response = await fetch(
-        `api/address/autocomplete?input=${inputText}&sessionToken=${sessionToken}`
+        `api/address/autocomplete?input=${inputText}&sessionToken=${sessionToken}`,
       );
 
       if (!response.ok) {
@@ -172,9 +172,7 @@ export default function AddressModal() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>住所</DialogTitle>
-          <DialogDescription className="sr-only">
-            住所登録と選択
-          </DialogDescription>
+          <DialogDescription className="sr-only">住所登録と選択</DialogDescription>
         </DialogHeader>
         <Command shouldFilter={false}>
           <div className="bg-muted mb-4">
@@ -211,9 +209,7 @@ export default function AddressModal() {
                     <MapPin />
                     <div>
                       <p className="font-bold">{suggestion.placeName}</p>
-                      <p className="text-muted-foreground">
-                        {suggestion.address_text}
-                      </p>
+                      <p className="text-muted-foreground">{suggestion.address_text}</p>
                     </div>
                   </CommandItem>
                 ))}
@@ -228,14 +224,12 @@ export default function AddressModal() {
                     key={address.id}
                     className={cn(
                       "p-5 justify-between items-center",
-                      address.id === data?.selectedAddress?.id && "bg-muted"
+                      address.id === data?.selectedAddress?.id && "bg-muted",
                     )}
                   >
                     <div>
                       <p className="font-bold">{address.name}</p>
-                      <p className="text-muted-foreground">
-                        {address.address_text}
-                      </p>
+                      <p className="text-muted-foreground">{address.address_text}</p>
                     </div>
                     <Button
                       onClick={(e) => {

@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "places.googleapis.com",
       },
+      {
+        protocol: "https",
+        hostname: "egtxldpivpbneksknmne.supabase.co",
+      },
     ],
   },
 };

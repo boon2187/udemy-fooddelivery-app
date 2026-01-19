@@ -10,17 +10,13 @@ interface CategoryProps {
   isSelected: boolean;
 }
 
-export default function Category({
-  category,
-  onClick,
-  isSelected,
-}: CategoryProps) {
+export default function Category({ category, onClick, isSelected }: CategoryProps) {
   return (
     <div onClick={() => onClick(category.type)}>
       <div
         className={cn(
           "relative aspect-square overflow-hidden rounded-full",
-          isSelected && "bg-green-200"
+          isSelected && "bg-green-200",
         )}
       >
         <Image

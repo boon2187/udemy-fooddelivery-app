@@ -1,7 +1,4 @@
-import {
-  GooglePlacesAutocompleteApiResponse,
-  RestaurantSuggestion,
-} from "@/types";
+import { GooglePlacesAutocompleteApiResponse, RestaurantSuggestion } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -14,16 +11,10 @@ export async function GET(request: NextRequest) {
   console.log("sessionToken", sessionToken);
 
   if (!input) {
-    return NextResponse.json(
-      { error: "文字を入力してください。" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "文字を入力してください。" }, { status: 400 });
   }
   if (!sessionToken) {
-    return NextResponse.json(
-      { error: "セッショントークンが必要です。" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "セッショントークンが必要です。" }, { status: 400 });
   }
 
   try {
@@ -66,7 +57,7 @@ export async function GET(request: NextRequest) {
       console.error(errorData);
       return NextResponse.json(
         { error: `Autocompleteリクエスト失敗: ${response.status}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -85,13 +76,9 @@ export async function GET(request: NextRequest) {
           return {
             type: "placePrediction",
             placeId: suggestion.placePrediction.placeId,
-            placeName:
-              suggestion.placePrediction.structuredFormat?.mainText?.text,
+            placeName: suggestion.placePrediction.structuredFormat?.mainText?.text,
           };
-        } else if (
-          suggestion.queryPrediction &&
-          suggestion.queryPrediction.text?.text
-        ) {
+        } else if (suggestion.queryPrediction && suggestion.queryPrediction.text?.text) {
           return {
             type: "queryPrediction",
             placeName: suggestion.queryPrediction.text?.text,
@@ -104,9 +91,6 @@ export async function GET(request: NextRequest) {
     // return NextResponse.json({ data: data });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "予期せぬエラーが発生しました。" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "予期せぬエラーが発生しました。" }, { status: 500 });
   }
 }

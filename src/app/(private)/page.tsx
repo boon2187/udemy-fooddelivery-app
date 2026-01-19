@@ -3,20 +3,14 @@ import Categories from "@/components/categories";
 import RestaurantCard from "@/components/restaurant-card";
 import RestaurantList from "@/components/restaurant-list";
 import Section from "@/components/section";
-import {
-  fetchLocation,
-  getRamenRestaurants,
-  getRestaurants,
-} from "@/lib/restaurants/api";
+import { fetchLocation, getRamenRestaurants, getRestaurants } from "@/lib/restaurants/api";
 
 export default async function Home() {
   const { lat, lng } = await fetchLocation();
   console.log("lat", lat);
   console.log("lng", lng);
-  const { data: nearbyRamenRestaurants, error: ramenError } =
-    await getRamenRestaurants(lat, lng);
-  const { data: nearbyRestaurants, error: restaurantError } =
-    await getRestaurants(lat, lng);
+  const { data: nearbyRamenRestaurants, error: ramenError } = await getRamenRestaurants(lat, lng);
+  const { data: nearbyRestaurants, error: restaurantError } = await getRestaurants(lat, lng);
   return (
     <>
       {/* カテゴリーのカルーセル   */}
@@ -44,9 +38,7 @@ export default async function Home() {
       ) : nearbyRamenRestaurants.length > 0 ? (
         <Section
           title="近くのラーメン店"
-          expandedContent={
-            <RestaurantList restaurants={nearbyRamenRestaurants} />
-          }
+          expandedContent={<RestaurantList restaurants={nearbyRamenRestaurants} />}
         >
           <CarouselContainer slideNumber={4}>
             {nearbyRamenRestaurants.map((restaurant) => (

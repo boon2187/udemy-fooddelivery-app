@@ -5,17 +5,14 @@ import { AddressSuggestion } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function selectSuggestionAction(
-  suggestion: AddressSuggestion,
-  sessionToken: string
-) {
+export async function selectSuggestionAction(suggestion: AddressSuggestion, sessionToken: string) {
   const supabase = await createClient();
   console.log("selectSuggestionAction", suggestion, sessionToken);
 
   const { data: locationData, error } = await getPlaceDetails(
     suggestion.placeId,
     ["location"],
-    sessionToken
+    sessionToken,
   );
   console.log("locationData", locationData);
 
@@ -26,9 +23,7 @@ export async function selectSuggestionAction(
     !locationData.location.latitude ||
     !locationData.location.longitude
   ) {
-    throw new Error(
-      "住所情報を取得できませんでした住所情報を取得できませんでした"
-    );
+    throw new Error("住所情報を取得できませんでした住所情報を取得できませんでした");
   }
   // ユーザー情報の取得
   const {
