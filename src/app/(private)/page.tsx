@@ -66,10 +66,7 @@ export default async function Home() {
       {!menus ? (
         <p>{menusError}</p>
       ) : menus.length > 0 ? (
-        <Section
-          title={restaurant?.restaurantName}
-          // expandedContent={<MenuList menus={menus} />}
-        >
+        <Section title={restaurant?.restaurantName} expandedContent={<MenuList menus={menus} />}>
           <CarouselContainer slideNumber={6}>
             {menus.map((menu) => (
               <MenuCard menu={menu} />
