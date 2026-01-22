@@ -3,6 +3,7 @@ import Categories from "@/components/categories";
 import RestaurantCard from "@/components/restaurant-card";
 import RestaurantList from "@/components/restaurant-list";
 import Section from "@/components/section";
+import { getMenus } from "@/lib/menus/api";
 import { fetchLocation, getRamenRestaurants, getRestaurants } from "@/lib/restaurants/api";
 
 export default async function Home() {
@@ -11,6 +12,14 @@ export default async function Home() {
   console.log("lng", lng);
   const { data: nearbyRamenRestaurants, error: ramenError } = await getRamenRestaurants(lat, lng);
   const { data: nearbyRestaurants, error: restaurantError } = await getRestaurants(lat, lng);
+
+  const primaryType = nearbyRamenRestaurants?.[0]?.primaryType;
+  const { data: menus, error: menusError } = primaryType
+    ? await getMenus(primaryType)
+    : { data: [] };
+
+  console.log("Menus:", menus);
+
   return (
     <>
       {/* カテゴリーのカルーセル   */}
