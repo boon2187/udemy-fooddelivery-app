@@ -8,6 +8,7 @@ import CarouselContainer from "./carousel-container";
 import MenuCard from "./menu-card";
 import FlatMenuCard from "./flat-menu-card";
 import { InView } from "react-intersection-observer";
+import MenuModal from "./menu-modal";
 
 interface MenuContentProps {
   categoryMenus: CategoryMenu[];
@@ -32,7 +33,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
         onSelectCategory={handleSelectCategory}
         acitiveCategoryId={activeCategoryId}
       />
-      <div className="w-3/4 bg-blue-400">
+      <div className="w-3/4">
         {categoryMenus.map((category) => (
           <InView
             id={`${category.id}-menu`}
@@ -60,6 +61,8 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
           </InView>
         ))}
       </div>
+
+      <MenuModal />
     </div>
   );
 }
