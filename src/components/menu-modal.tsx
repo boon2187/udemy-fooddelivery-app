@@ -10,9 +10,13 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 
-export default function MenuModal() {
+interface MenuModalProps {
+  isOpen: boolean;
+}
+
+export default function MenuModal({ isOpen }: MenuModalProps) {
   return (
-    <Dialog open={true}>
+    <Dialog open={isOpen}>
       <DialogTrigger>Open</DialogTrigger>
       <DialogContent className="lg:max-w-4xl">
         <DialogHeader className="sr-only">
