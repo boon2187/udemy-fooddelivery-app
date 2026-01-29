@@ -55,7 +55,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   {category.items.map((menu) => (
-                    <FlatMenuCard key={menu.id} menu={menu} />
+                    <FlatMenuCard key={menu.id} menu={menu} onClick={openModal} />
                   ))}
                 </div>
               )}
@@ -64,7 +64,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
         ))}
       </div>
 
-      <MenuModal isOpen={isOpen} />
+      <MenuModal isOpen={isOpen} closeModal={closeModal} />
     </div>
   );
 }

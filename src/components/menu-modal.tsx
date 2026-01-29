@@ -12,12 +12,12 @@ import { DialogClose } from "@radix-ui/react-dialog";
 
 interface MenuModalProps {
   isOpen: boolean;
+  closeModal: () => void;
 }
 
-export default function MenuModal({ isOpen }: MenuModalProps) {
+export default function MenuModal({ isOpen, closeModal }: MenuModalProps) {
   return (
-    <Dialog open={isOpen}>
-      <DialogTrigger>Open</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
       <DialogContent className="lg:max-w-4xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{"メニュー"}</DialogTitle>
