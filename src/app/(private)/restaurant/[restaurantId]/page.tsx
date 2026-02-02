@@ -73,7 +73,7 @@ export default async function RestaurantPage({
       {!categoryMenus ? (
         <p>{menusError}</p>
       ) : categoryMenus.length > 0 ? (
-        <MenuContent categoryMenus={categoryMenus} />
+        <MenuContent categoryMenus={categoryMenus} restaurantId={restaurantId} />
       ) : (
         <p>メニューが見つかりませんでした。</p>
       )}
