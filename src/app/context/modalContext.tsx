@@ -23,7 +23,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 
   const closeModal = () => {
     setIsOpen(false);
-    setSelectedItem(null);
+    setTimeout(() => setSelectedItem(null), 200); // モーダルの閉じるアニメーション後に選択をクリア
   };
 
   return (
