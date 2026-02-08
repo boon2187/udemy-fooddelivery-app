@@ -1,9 +1,61 @@
 "use server";
 
 import { Menu } from "@/types";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function addToCartAction(selectedItem: Menu, quantity: number, restaurantId: string) {
-  console.log("sever_actions_selectedItem", selectedItem);
-  console.log("sever_actions_quantity", quantity);
-  console.log("sever_actions_restaurantId", restaurantId);
+  const supabase = await createClient();
+  // ユーザー情報の取得
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  const { data: existingCart, error: existingCartError } = await supabase
+    .from("carts")
+    .select("id")
+    .match({ user_id: user.id, restaurant_id: restaurantId })
+    .maybeSingle();
+
+  if (existingCartError) {
+    console.error("カートの取得に失敗しました。", existingCartError);
+    throw new Error("カートの取得できませんでした");
+  }
+
+  // 既存のカートが存在しない場合（初めてカートに追加したとき）
+  if (!existingCart) {
+    const { data: newCart, error: newCartError } = await supabase
+      .from("carts")
+      .insert({ user_id: user.id, restaurant_id: restaurantId })
+      .select("id")
+      .single();
+
+    if (newCartError) {
+      console.error("カートの作成に失敗しました。", newCartError);
+      throw new Error("カートの作成に失敗しました");
+    }
+
+    const newCartId = newCart.id;
+
+    // 新しいカートにアイテムを追加
+    const { error: insertError } = await supabase.from("cart_items").insert({
+      cart_id: newCartId,
+      menu_id: selectedItem.id,
+      quantity: quantity,
+    });
+
+    if (insertError) {
+      console.error("カートアイテムの追加に失敗しました。", insertError);
+      throw new Error("カートアイテムの追加に失敗しました");
+    }
+
+    return;
+  }
+
+  // 既存のカートが存在する場合、そのカートにアイテムを追加 or 数量を上書き更新
 }
