@@ -1,4 +1,5 @@
 import { getPlaceDetails } from "@/lib/restaurants/api";
+import { Cart } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     console.log("cartです。", carts);
 
-    const promises = carts.map(async (cart) => {
+    const promises = carts.map(async (cart): Promise<Cart> => {
       const { data: restaurantData, error } = await getPlaceDetails(cart.restaurant_id, [
         "displayName",
         "photos",
