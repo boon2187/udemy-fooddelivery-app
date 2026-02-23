@@ -36,23 +36,64 @@ export default function CartSheet({ cart, count }: CartSheetProps) {
           </SheetDescription>
         </SheetHeader>
         {cart ? (
-          <div className="flex justify-between items-center">
-            <Link className="font-bold text-2xl" href={`/restaurant/${cart.restaurant_id}`}>
-              {cart.restaurantName}
-            </Link>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Trash2 color="red" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>ゴミ箱を空にする</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <>
+            <div className="flex justify-between items-center">
+              <Link className="font-bold text-2xl" href={`/restaurant/${cart.restaurant_id}`}>
+                {cart.restaurantName}
+              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <Trash2 color="red" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>ゴミ箱を空にする</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <ul className="flex-1 overflow-y-auto">
+              {cart.cart_items.map((item) => (
+                <li key={item.id} className="border-b py-5">
+                  <div className="flex items-center justify-between">
+                    <p>{item.menus.name}</p>
+                    <div className="relative w-[72px] h-[72px]">
+                      <Image
+                        src="/no_image.png"
+                        alt="メニュー画像"
+                        fill
+                        sizes="72px"
+                        className="object-cover rounded"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="quantity" className="sr-only">
+                      数量
+                    </label>
+                    <select
+                      id="quantity"
+                      name="quantity"
+                      value={item.quantity}
+                      onChange={() => {}}
+                      className="border rounded-full pr-8 pl-4 bg-muted h-9"
+                    >
+                      <option value="0">削除する</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                    <p>￥{item.menus.price * item.quantity}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-4">
             <Image src={"/images/trolley.png"} width={192} height={192} alt="カード" />
