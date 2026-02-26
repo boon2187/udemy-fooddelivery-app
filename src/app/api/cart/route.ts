@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
+    const bucket = supabase.storage.from("menus");
 
     const {
       data: { user },
@@ -49,6 +50,17 @@ export async function GET(request: NextRequest) {
 
       return {
         ...cart,
+        cart_items: cart.cart_items.map((item) => {
+            const { image_path, ...restMenu } = item.menus;
+            const publicUrl = bucket.getPublicUrl(image_path).data.publicUrl;
+            return {
+                ...item,
+                menus: {
+                    ...restMenu,
+                    photoUrl: publicUrl,
+                }
+            }
+        }),
         restaurantName: restaurantData.displayName,
         photoUrl: restaurantData.photoUrl!,
       };
