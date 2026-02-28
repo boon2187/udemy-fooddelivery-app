@@ -4,10 +4,13 @@ import { useCart } from "@/hooks/cart/useCart";
 import { computeCartDisplayLogic } from "@/lib/cart/utils";
 import CartSheet from "./cart-sheet";
 import CartDropdown from "./cart-dropdown";
+import { useState } from "react";
+import type { Cart } from "@/types";
 
 export default function Cart() {
+  const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
   const { carts, isLoading, cartsError } = useCart();
-  const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts);
+  const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts, selectedCart);
   console.log("cart component:", carts);
 
   //エラーの場合
@@ -21,6 +24,6 @@ export default function Cart() {
   return displayMode === "cartSheet" ? (
     <CartSheet cart={sheetCart} count={cartCount} />
   ) : (
-    <CartDropdown carts={carts} />
+    <CartDropdown carts={carts} setSelectedCart={setSelectedCart} />
   );
 }
