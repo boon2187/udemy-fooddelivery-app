@@ -14,9 +14,10 @@ import { Dispatch, SetStateAction } from "react";
 interface CartDropDownProps {
   carts: Cart[];
   setSelectedCart: Dispatch<SetStateAction<Cart | null>>;
+  openCart: () => void;
 }
 
-export default function CartDropDown({ carts, setSelectedCart }: CartDropDownProps) {
+export default function CartDropDown({ carts, setSelectedCart, openCart }: CartDropDownProps) {
   const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
   const calculateSubTotal = (items: CartItem[]) =>
     items.reduce((total, item) => total + calculateItemTotal(item), 0);
@@ -36,7 +37,10 @@ export default function CartDropDown({ carts, setSelectedCart }: CartDropDownPro
           <DropdownMenuItem
             key={cart.id}
             className="flex items-center p-4 justify-between"
-            onClick={() => setSelectedCart(cart)}
+            onClick={() => {
+              setSelectedCart(cart);
+              openCart();
+            }}
           >
             <div className="flex gap-3 flex-1 min-w-0">
               <div className="w-[64px] h-[64px] relative overflow-hidden rounded-full flex-none">

@@ -6,8 +6,10 @@ import CartSheet from "./cart-sheet";
 import CartDropdown from "./cart-dropdown";
 import { useState } from "react";
 import type { Cart } from "@/types";
+import { useCartVisibility } from "@/app/context/cartContext";
 
 export default function Cart() {
+  const { isOpen, openCart, closeCart } = useCartVisibility();
   const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
   const { carts, isLoading, cartsError } = useCart();
   const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts, selectedCart);
@@ -22,8 +24,8 @@ export default function Cart() {
     return <div>カートの情報を読み込んでいます...</div>;
   }
   return displayMode === "cartSheet" ? (
-    <CartSheet cart={sheetCart} count={cartCount} />
+    <CartSheet cart={sheetCart} count={cartCount} isOpen={isOpen} />
   ) : (
-    <CartDropdown carts={carts} setSelectedCart={setSelectedCart} />
+    <CartDropdown carts={carts} setSelectedCart={setSelectedCart} openCart={openCart} />
   );
 }
