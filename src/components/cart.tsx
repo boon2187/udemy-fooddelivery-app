@@ -24,7 +24,13 @@ export default function Cart() {
     return <div>カートの情報を読み込んでいます...</div>;
   }
   return displayMode === "cartSheet" ? (
-    <CartSheet cart={sheetCart} count={cartCount} isOpen={isOpen} />
+    <CartSheet
+      cart={sheetCart}
+      count={cartCount}
+      isOpen={isOpen}
+      openCart={openCart}
+      closeCart={closeCart}
+    />
   ) : (
     <CartDropdown carts={carts} setSelectedCart={setSelectedCart} openCart={openCart} />
   );

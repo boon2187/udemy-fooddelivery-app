@@ -17,16 +17,18 @@ interface CartSheetProps {
   cart: Cart | null;
   count: number;
   isOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
-export default function CartSheet({ cart, count, isOpen }: CartSheetProps) {
+export default function CartSheet({ cart, count, isOpen, openCart, closeCart }: CartSheetProps) {
   const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
   const calculateSubTotal = (items: CartItem[]) =>
     items.reduce((total, item) => total + calculateItemTotal(item), 0);
 
   return (
-    <Sheet open={isOpen}>
+    <Sheet open={isOpen} onOpenChange={(isOpen) => (isOpen ? openCart() : closeCart())}>
       <SheetTrigger className="relative cursor-pointer">
         <ShoppingCart />
         <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-green-700 rounded-full size-4 text-xs text-primary-foreground flex items-center justify-center">
