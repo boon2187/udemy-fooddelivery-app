@@ -19,7 +19,6 @@ interface CartSheetProps {
 }
 
 export default function CartSheet({ cart, count }: CartSheetProps) {
-
   const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
   const calculateSubTotal = (items: CartItem[]) =>
@@ -101,13 +100,13 @@ export default function CartSheet({ cart, count }: CartSheetProps) {
             </ul>
 
             <div className="flex justify-between items-center font-bold text-lg">
-                <div>小計</div>
-                <div>￥{calculateSubTotal(cart.cart_items).toLocaleString()}</div>
+              <div>小計</div>
+              <div>￥{calculateSubTotal(cart.cart_items).toLocaleString()}</div>
             </div>
             <SheetClose asChild>
-                <Button asChild>
-                    <Link href={`/checkout/${cart.restaurant_id}`}>お会計に進む</Link>
-                </Button>
+              <Button asChild>
+                <Link href={`/checkout/${cart.restaurant_id}`}>お会計に進む</Link>
+              </Button>
             </SheetClose>
           </>
         ) : (

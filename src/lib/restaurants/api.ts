@@ -12,7 +12,7 @@ import { get } from "http";
 // 近くのレストランを取得
 export async function getRestaurants(
   lat: number,
-  lng: number
+  lng: number,
 ): Promise<{
   data: Restaurant[];
   error?: string;
@@ -84,7 +84,7 @@ export async function getRestaurants(
   const nearbyRestaurants = data.places;
 
   const matchedRestaurants = nearbyRestaurants.filter(
-    (place) => place.primaryType && desiredTypes.includes(place.primaryType)
+    (place) => place.primaryType && desiredTypes.includes(place.primaryType),
   );
   // console.log("matchedRestaurants", matchedRestaurants);
 
@@ -96,7 +96,7 @@ export async function getRestaurants(
 // 近くのラーメン店を取得
 export async function getRamenRestaurants(
   lat: number,
-  lng: number
+  lng: number,
 ): Promise<{
   data: Restaurant[];
   error?: string;
@@ -158,7 +158,7 @@ export async function getRamenRestaurants(
 export async function fetchCategoryRestaurants(
   category: string,
   lat: number,
-  lng: number
+  lng: number,
 ): Promise<{
   data: Restaurant[];
   error?: string;
@@ -361,7 +361,7 @@ export async function fetchLocation() {
     addresses (
       latitude,longitude
     )
-  `
+  `,
     )
     .eq("id", user.id)
     .single();
