@@ -11,7 +11,7 @@ const fetcher = async (url: string) => {
   return data;
 };
 
-export function useCart() {
+export function useCart(restaurantId?: string) {
   const {
     data: carts,
     error: cartsError,
@@ -19,6 +19,10 @@ export function useCart() {
     mutate: mutateCart,
   } = useSWR<Cart[]>(`/api/cart`, fetcher);
 
+  const targetCart = restaurantId
+    ? (carts?.find((cart) => cart.restaurant_id === restaurantId) ?? null)
+    : null;
+  console.log("targetCart(useCart):", targetCart);
   return {
     carts,
     cartsError,

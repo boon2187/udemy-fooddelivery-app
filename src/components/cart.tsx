@@ -7,11 +7,13 @@ import CartDropdown from "./cart-dropdown";
 import { useEffect, useState } from "react";
 import type { Cart } from "@/types";
 import { useCartVisibility } from "@/app/context/cartContext";
+import { useParams } from "next/navigation";
 
 export default function Cart() {
   const { isOpen, openCart, closeCart } = useCartVisibility();
   const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
-  const { carts, isLoading, cartsError } = useCart();
+  const { restaurantId } = useParams<{ restaurantId?: string }>();
+  const { carts, isLoading, cartsError } = useCart(restaurantId);
   const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts, selectedCart);
   console.log("cart component:", carts);
 
