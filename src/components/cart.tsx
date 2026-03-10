@@ -4,7 +4,7 @@ import { useCart } from "@/hooks/cart/useCart";
 import { computeCartDisplayLogic } from "@/lib/cart/utils";
 import CartSheet from "./cart-sheet";
 import CartDropdown from "./cart-dropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Cart } from "@/types";
 import { useCartVisibility } from "@/app/context/cartContext";
 
@@ -14,6 +14,13 @@ export default function Cart() {
   const { carts, isLoading, cartsError } = useCart();
   const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts, selectedCart);
   console.log("cart component:", carts);
+
+  useEffect(() => {
+    // カートシートを閉じた場合のみ選択されたカートをリセット
+    if (!isOpen) {
+      setTimeout(() => setSelectedCart(null), 200);
+    }
+  }, [isOpen]);
 
   //エラーの場合
   if (cartsError) {
