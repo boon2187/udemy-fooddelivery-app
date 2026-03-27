@@ -20,6 +20,7 @@ interface MenuModalProps {
   closeModal: () => void;
   selectedItem: Menu | null;
   restaurantId: string;
+  openCart: () => void;
 }
 
 export default function MenuModal({
@@ -27,6 +28,7 @@ export default function MenuModal({
   closeModal,
   selectedItem,
   restaurantId,
+  openCart,
 }: MenuModalProps) {
   const [quantity, setQuantity] = useState(1);
   const handleAddToCart = async () => {
@@ -34,6 +36,7 @@ export default function MenuModal({
     //カートに追加するサーバーアクションを呼び出す
     try {
       await addToCartAction(selectedItem, quantity, restaurantId);
+      openCart();
     } catch (error) {
       console.error(error);
       alert("エラーが発生しました");
