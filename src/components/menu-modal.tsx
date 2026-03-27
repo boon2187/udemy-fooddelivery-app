@@ -11,8 +11,8 @@ import {
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { Menu } from "@/types";
-import { useMemo, useState } from "react";
+import { Cart, Menu } from "@/types";
+import { useEffect, useMemo, useState } from "react";
 import { addToCartAction } from "@/app/(private)/actions/cartActions";
 
 interface MenuModalProps {
@@ -21,6 +21,7 @@ interface MenuModalProps {
   selectedItem: Menu | null;
   restaurantId: string;
   openCart: () => void;
+  targetCart: Cart | null;
 }
 
 export default function MenuModal({
@@ -29,14 +30,26 @@ export default function MenuModal({
   selectedItem,
   restaurantId,
   openCart,
+  targetCart,
 }: MenuModalProps) {
   const [quantity, setQuantity] = useState(1);
+
+  const existingCartItem = targetCart
+    ? (targetCart.cart_items.find((item) => item.menus.id === selectedItem?.id) ?? null)
+    : null;
+
+  useEffect(() => {
+    if (!selectedItem) return;
+    setQuantity(existingCartItem?.quantity ?? 1);
+  }, [selectedItem, existingCartItem]);
+
   const handleAddToCart = async () => {
     if (!selectedItem) return;
     //カートに追加するサーバーアクションを呼び出す
     try {
       await addToCartAction(selectedItem, quantity, restaurantId);
       openCart();
+      closeModal();
     } catch (error) {
       console.error(error);
       alert("エラーが発生しました");
@@ -99,16 +112,15 @@ export default function MenuModal({
                   </select>
                 </div>
 
-                <DialogClose asChild>
-                  <Button
-                    onClick={handleAddToCart}
-                    type="button"
-                    size="lg"
-                    className="mt-6 h-14 text-lg font-semibold"
-                  >
-                    商品を追加（￥{totalPrice}）
-                  </Button>
-                </DialogClose>
+                <Button
+                  onClick={handleAddToCart}
+                  type="button"
+                  size="lg"
+                  className="mt-6 h-14 text-lg font-semibold"
+                >
+                  {existingCartItem ? "商品を更新" : "商品を追加"}
+                  （￥{totalPrice}）
+                </Button>
               </div>
             </div>
           </>

@@ -11,6 +11,7 @@ import { InView } from "react-intersection-observer";
 import MenuModal from "./menu-modal";
 import { useModal } from "@/app/context/modalContext";
 import { useCartVisibility } from "@/app/context/cartContext";
+import { useCart } from "@/hooks/cart/useCart";
 
 interface MenuContentProps {
   categoryMenus: CategoryMenu[];
@@ -19,6 +20,7 @@ interface MenuContentProps {
 
 export default function MenuContent({ categoryMenus, restaurantId }: MenuContentProps) {
   const { isOpen, setIsOpen, openModal, closeModal, selectedItem } = useModal();
+  const { targetCart } = useCart(restaurantId);
   const { openCart } = useCartVisibility();
   const [activeCategoryId, setActiveCategoryId] = useState(categoryMenus[0].id);
 
@@ -73,6 +75,7 @@ export default function MenuContent({ categoryMenus, restaurantId }: MenuContent
         selectedItem={selectedItem}
         restaurantId={restaurantId}
         openCart={openCart}
+        targetCart={targetCart}
       />
     </div>
   );
