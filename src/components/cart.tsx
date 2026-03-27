@@ -13,8 +13,12 @@ export default function Cart() {
   const { isOpen, openCart, closeCart } = useCartVisibility();
   const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
   const { restaurantId } = useParams<{ restaurantId?: string }>();
-  const { carts, isLoading, cartsError } = useCart(restaurantId);
-  const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(carts, selectedCart);
+  const { carts, isLoading, cartsError, targetCart } = useCart(restaurantId);
+  const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(
+    carts,
+    selectedCart,
+    targetCart,
+  );
   console.log("cart component:", carts);
 
   useEffect(() => {

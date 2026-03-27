@@ -5,6 +5,7 @@ const sumItems = (cart: Cart) => cart.cart_items.reduce((sum, item) => sum + ite
 export function computeCartDisplayLogic(
   carts: Cart[] | undefined,
   selectedCart: Cart | null = null,
+  targetCart: Cart | null,
 ) {
   // カートなし
   if (!carts || carts.length === 0) {
@@ -26,6 +27,14 @@ export function computeCartDisplayLogic(
     };
   }
 
-  // カート複数
+  // targetCartがある場合
+  if (targetCart) {
+    return {
+      displayMode: "cartSheet",
+      sheetCart: targetCart,
+      cartCount: sumItems(targetCart),
+    };
+  }
+
   return { displayMode: "cartDropdown", sheetCart: null, cartCount: 0 };
 }

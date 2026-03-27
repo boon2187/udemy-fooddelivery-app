@@ -28,5 +28,6 @@ export function useCart(restaurantId?: string) {
     cartsError,
     isLoading,
     mutateCart,
+    targetCart,
   };
 }
