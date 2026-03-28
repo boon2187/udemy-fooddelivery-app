@@ -72,3 +72,7 @@ export async function addToCartAction(selectedItem: Menu, quantity: number, rest
     throw new Error("カートアイテムの追加・更新に失敗しました");
   }
 }
+
+export async function updateCartItemAction(quantity: number, cartItemId: number, cartId: number) {
+  console.log("Updating cart item:", { quantity, cartItemId, cartId });
+}

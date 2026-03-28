@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
 interface CartSheetProps {
   cart: Cart | null;
   count: number;
@@ -26,6 +27,20 @@ export default function CartSheet({ cart, count, isOpen, openCart, closeCart }: 
 
   const calculateSubTotal = (items: CartItem[]) =>
     items.reduce((total, item) => total + calculateItemTotal(item), 0);
+
+  const handleUpdateCartItem = async (value: string, cartItemId: number) => {
+    // cartが存在しない場合は何もしない
+    if (!cart) return;
+    const quantity = Number(value);
+    console.log("Selected quantity:", quantity);
+    try {
+      // カートアイテムの数量を更新するサーバーアクションを呼び出す
+      await updateCartItemAction(quantity, cartItemId, cart.id);
+    } catch (error) {
+      console.error(error);
+      alert("エラーが発生しました");
+    }
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={(isOpen) => (isOpen ? openCart() : closeCart())}>
@@ -81,14 +96,14 @@ export default function CartSheet({ cart, count, isOpen, openCart, closeCart }: 
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <label htmlFor="quantity" className="sr-only">
+                    <label htmlFor={`quantity-${item.id}`} className="sr-only">
                       数量
                     </label>
                     <select
-                      id="quantity"
+                      id={`quantity-${item.id}`}
                       name="quantity"
                       value={item.quantity}
-                      onChange={() => {}}
+                      onChange={(e) => handleUpdateCartItem(e.target.value, item.id)}
                       className="border rounded-full pr-8 pl-4 bg-muted h-9"
                     >
                       <option value="0">削除する</option>
