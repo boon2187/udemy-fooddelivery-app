@@ -29,7 +29,8 @@ export async function GET(request: NextRequest) {
         )
     `,
       )
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .order("id", { ascending: true });
 
     if (cartsError) {
       console.error("カート情報の取得に失敗", cartsError);
@@ -51,15 +52,15 @@ export async function GET(request: NextRequest) {
       return {
         ...cart,
         cart_items: cart.cart_items.map((item) => {
-            const { image_path, ...restMenu } = item.menus;
-            const publicUrl = bucket.getPublicUrl(image_path).data.publicUrl;
-            return {
-                ...item,
-                menus: {
-                    ...restMenu,
-                    photoUrl: publicUrl,
-                }
-            }
+          const { image_path, ...restMenu } = item.menus;
+          const publicUrl = bucket.getPublicUrl(image_path).data.publicUrl;
+          return {
+            ...item,
+            menus: {
+              ...restMenu,
+              photoUrl: publicUrl,
+            },
+          };
         }),
         restaurantName: restaurantData.displayName,
         photoUrl: restaurantData.photoUrl!,

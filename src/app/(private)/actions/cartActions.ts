@@ -74,18 +74,18 @@ export async function addToCartAction(selectedItem: Menu, quantity: number, rest
 }
 
 export async function updateCartItemAction(quantity: number, cartItemId: number, cartId: number) {
+  // ユーザー情報の取得と認証の確認
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
   // 削除の処理
   if (quantity === 0) {
-    // ユーザー情報の取得
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      redirect("/login");
-    }
     // カートアイテムの数を取得
     const { count, error } = await supabase
       .from("cart_items")
@@ -125,4 +125,13 @@ export async function updateCartItemAction(quantity: number, cartItemId: number,
     return;
   }
   // 数量の更新の処理
+  const { error: updateError } = await supabase
+    .from("cart_items")
+    .update({ quantity: quantity })
+    .eq("id", cartItemId);
+
+  if (updateError) {
+    console.error("カートアイテムの更新に失敗しました。", updateError);
+    throw new Error("カートアイテムの更新に失敗しました");
+  }
 }
