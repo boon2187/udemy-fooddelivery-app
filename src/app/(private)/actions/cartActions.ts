@@ -74,5 +74,55 @@ export async function addToCartAction(selectedItem: Menu, quantity: number, rest
 }
 
 export async function updateCartItemAction(quantity: number, cartItemId: number, cartId: number) {
-  console.log("Updating cart item:", { quantity, cartItemId, cartId });
+  // 削除の処理
+  if (quantity === 0) {
+    // ユーザー情報の取得
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      redirect("/login");
+    }
+    // カートアイテムの数を取得
+    const { count, error } = await supabase
+      .from("cart_items")
+      .select("*", { count: "exact", head: true })
+      .eq("cart_id", cartId);
+
+    if (error) {
+      console.error("カートアイテムの数の取得に失敗しました。", error);
+      throw new Error("カートアイテムの数の取得に失敗しました");
+    }
+
+    // カート自体を削除
+    if (count === 1) {
+      const { error: deleteCartError } = await supabase
+        .from("carts")
+        .delete()
+        .match({ id: cartId, user_id: user.id });
+
+      if (deleteCartError) {
+        console.error("カートの削除に失敗しました。", deleteCartError);
+        throw new Error("カートの削除に失敗しました");
+      }
+
+      return;
+    }
+    // カートアイテムを削除
+    const { error: deleteCartItemError } = await supabase
+      .from("cart_items")
+      .delete()
+      .eq("id", cartItemId);
+
+    if (deleteCartItemError) {
+      console.error("カートアイテムの削除に失敗しました。", deleteCartItemError);
+      throw new Error("カートアイテムの削除に失敗しました");
+    }
+
+    return;
+  }
+  // 数量の更新の処理
 }
