@@ -14,6 +14,7 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Cart, Menu } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import { addToCartAction } from "@/app/(private)/actions/cartActions";
+import { KeyedMutator } from "swr";
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface MenuModalProps {
   restaurantId: string;
   openCart: () => void;
   targetCart: Cart | null;
+  mutateCart: KeyedMutator<Cart[]>;
 }
 
 export default function MenuModal({
@@ -31,6 +33,7 @@ export default function MenuModal({
   restaurantId,
   openCart,
   targetCart,
+  mutateCart,
 }: MenuModalProps) {
   const [quantity, setQuantity] = useState(1);
 
@@ -48,6 +51,25 @@ export default function MenuModal({
     //カートに追加するサーバーアクションを呼び出す
     try {
       await addToCartAction(selectedItem, quantity, restaurantId);
+      mutateCart((prevCarts: Cart[] | undefined) => {
+        if (!prevCarts) return;
+        if (!targetCart) {
+          // カートがまだ存在しない場合、新しいカートを作成して返す
+
+          return;
+        }
+
+        const cart = { ...targetCart };
+        if (existingCartItem) {
+          // 既にカートに商品がある場合、数量を更新して返す
+          cart.cart_items = cart.cart_items.map((item) =>
+            item.id === existingCartItem.id ? { ...item, quantity: quantity } : item,
+          );
+        } else {
+          // カートに商品がない場合、新しい商品をカートに追加して返す
+        }
+        return prevCarts.map((c) => (c.id === cart.id ? cart : c));
+      }, false);
       openCart();
       closeModal();
     } catch (error) {

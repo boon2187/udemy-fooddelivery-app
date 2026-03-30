@@ -21,6 +21,14 @@ export default function Cart() {
   );
   console.log("cart component:", carts);
 
+  // cartsが更新されたとき、selectedCartをリセットする
+  useEffect(() => {
+    if (!carts || !selectedCart) return;
+    const updatedCart = carts.find((cart) => cart.id === selectedCart.id) ?? null;
+    console.log("updatedCart:", updatedCart);
+    setSelectedCart(updatedCart);
+  }, [carts]);
+
   useEffect(() => {
     // カートシートを閉じた場合のみ選択されたカートをリセット
     if (!isOpen) {
