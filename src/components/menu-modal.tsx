@@ -11,7 +11,7 @@ import {
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { Cart, Menu } from "@/types";
+import { Cart, CartItem, Menu } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import { addToCartAction } from "@/app/(private)/actions/cartActions";
 import { KeyedMutator } from "swr";
@@ -50,7 +50,7 @@ export default function MenuModal({
     if (!selectedItem) return;
     //カートに追加するサーバーアクションを呼び出す
     try {
-      await addToCartAction(selectedItem, quantity, restaurantId);
+      const response = await addToCartAction(selectedItem, quantity, restaurantId);
       mutateCart((prevCarts: Cart[] | undefined) => {
         if (!prevCarts) return;
         if (!targetCart) {
@@ -67,6 +67,17 @@ export default function MenuModal({
           );
         } else {
           // カートに商品がない場合、新しい商品をカートに追加して返す
+          const newCartItem: CartItem = {
+            id: response?.id!, // サーバーアクションから返されたcart_itemのIDを使用
+            menus: {
+              id: selectedItem.id,
+              name: selectedItem.name,
+              price: selectedItem.price,
+              photoUrl: selectedItem.photoUrl,
+            },
+            quantity: quantity,
+          };
+          cart.cart_items = [...cart.cart_items, newCartItem];
         }
         return prevCarts.map((c) => (c.id === cart.id ? cart : c));
       }, false);

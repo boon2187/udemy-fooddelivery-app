@@ -58,19 +58,25 @@ export async function addToCartAction(selectedItem: Menu, quantity: number, rest
   }
 
   // 既存のカートが存在する場合、そのカートにアイテムを追加 or 数量を上書き更新
-  const { error: upsertError } = await supabase.from("cart_items").upsert(
-    {
-      cart_id: existingCart.id,
-      menu_id: selectedItem.id,
-      quantity: quantity,
-    },
-    { onConflict: "cart_id, menu_id" },
-  );
+  const { data, error: upsertError } = await supabase
+    .from("cart_items")
+    .upsert(
+      {
+        cart_id: existingCart.id,
+        menu_id: selectedItem.id,
+        quantity: quantity,
+      },
+      { onConflict: "cart_id, menu_id" },
+    )
+    .select("id")
+    .single();
 
   if (upsertError) {
     console.error("カートアイテムの追加・更新に失敗しました。", upsertError);
     throw new Error("カートアイテムの追加・更新に失敗しました");
   }
+
+  return { type: "update", id: data.id };
 }
 
 export async function updateCartItemAction(quantity: number, cartItemId: number, cartId: number) {
