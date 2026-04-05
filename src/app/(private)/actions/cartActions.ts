@@ -1,11 +1,20 @@
 "use server";
 
-import { Menu } from "@/types";
+import { getPlaceDetails } from "@/lib/restaurants/api";
+import { Cart, Menu } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function addToCartAction(selectedItem: Menu, quantity: number, restaurantId: string) {
+type addToCartResponse = { type: "new"; cart: Cart } | { type: "update"; id: number };
+
+export async function addToCartAction(
+  selectedItem: Menu,
+  quantity: number,
+  restaurantId: string,
+): Promise<addToCartResponse> {
   const supabase = await createClient();
+  const bucket = supabase.storage.from("menus");
+
   // ユーザー情報の取得
   const {
     data: { user },
@@ -54,7 +63,43 @@ export async function addToCartAction(selectedItem: Menu, quantity: number, rest
       throw new Error("カートアイテムの追加に失敗しました");
     }
 
-    return;
+    const { data: insertedCart, error: insertedCartError } = await supabase
+      .from("carts")
+      .select(`id, restaurant_id, cart_items (id, quantity, menus (id, name, price, image_path))`)
+      .match({ user_id: user.id, id: newCartId })
+      .single();
+
+    if (insertedCartError) {
+      console.error("カートデータの取得に失敗しました。", insertedCartError);
+      throw new Error("カートデータの取得に失敗しました");
+    }
+
+    const { data: restaurantData, error } = await getPlaceDetails(restaurantId, [
+      "displayName",
+      "photos",
+    ]);
+
+    if (!restaurantData || error) {
+      throw new Error(`レストラン情報の取得に失敗しました。${error}`);
+    }
+
+    const updatedCart: Cart = {
+      ...insertedCart,
+      cart_items: insertedCart.cart_items.map((item) => {
+        const { image_path, ...restMenus } = item.menus;
+        const publicUrl = bucket.getPublicUrl(item.menus.image_path).data.publicUrl;
+        return {
+          ...item,
+          menus: {
+            ...restMenus,
+            photoUrl: publicUrl,
+          },
+        };
+      }),
+      restaurantName: restaurantData.displayName,
+      photoUrl: restaurantData.photoUrl!,
+    };
+    return { type: "new", cart: updatedCart };
   }
 
   // 既存のカートが存在する場合、そのカートにアイテムを追加 or 数量を上書き更新

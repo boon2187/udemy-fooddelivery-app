@@ -53,11 +53,13 @@ export default function MenuModal({
       const response = await addToCartAction(selectedItem, quantity, restaurantId);
       mutateCart((prevCarts: Cart[] | undefined) => {
         if (!prevCarts) return;
-        if (!targetCart) {
+        if (response.type === "new") {
+          const { cart } = response;
           // カートがまだ存在しない場合、新しいカートを作成して返す
-
-          return;
+          return [...prevCarts, cart];
         }
+
+        if (!targetCart) return;
 
         const cart = { ...targetCart };
         if (existingCartItem) {
@@ -68,7 +70,7 @@ export default function MenuModal({
         } else {
           // カートに商品がない場合、新しい商品をカートに追加して返す
           const newCartItem: CartItem = {
-            id: response?.id!, // サーバーアクションから返されたcart_itemのIDを使用
+            id: response.id, // サーバーアクションから返されたcart_itemのIDを使用
             menus: {
               id: selectedItem.id,
               name: selectedItem.name,
