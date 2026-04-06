@@ -14,15 +14,24 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
+import { KeyedMutator } from "swr";
 interface CartSheetProps {
   cart: Cart | null;
   count: number;
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
+  mutateCart: KeyedMutator<Cart[]>;
 }
 
-export default function CartSheet({ cart, count, isOpen, openCart, closeCart }: CartSheetProps) {
+export default function CartSheet({
+  cart,
+  count,
+  isOpen,
+  openCart,
+  closeCart,
+  mutateCart,
+}: CartSheetProps) {
   const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
   const calculateSubTotal = (items: CartItem[]) =>
@@ -36,6 +45,19 @@ export default function CartSheet({ cart, count, isOpen, openCart, closeCart }: 
     try {
       // カートアイテムの数量を更新するサーバーアクションを呼び出す
       await updateCartItemAction(quantity, cartItemId, cart.id);
+
+      if (quantity === 0) {
+        // 削除処理
+        if (cart.cart_items.length === 1) {
+          setTimeout(
+            () => mutateCart((prevCarts) => prevCarts?.filter((c) => c.id !== cart.id), false),
+            200,
+          );
+        }
+        // カート内のアイテムを削除する
+      }
+
+      // 数量を更新
     } catch (error) {
       console.error(error);
       alert("エラーが発生しました");

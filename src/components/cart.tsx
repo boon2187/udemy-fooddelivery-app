@@ -13,7 +13,7 @@ export default function Cart() {
   const { isOpen, openCart, closeCart } = useCartVisibility();
   const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
   const { restaurantId } = useParams<{ restaurantId?: string }>();
-  const { carts, isLoading, cartsError, targetCart } = useCart(restaurantId);
+  const { carts, isLoading, cartsError, targetCart, mutateCart } = useCart(restaurantId);
   const { displayMode, sheetCart, cartCount } = computeCartDisplayLogic(
     carts,
     selectedCart,
@@ -51,6 +51,7 @@ export default function Cart() {
       isOpen={isOpen}
       openCart={openCart}
       closeCart={closeCart}
+      mutateCart={mutateCart}
     />
   ) : (
     <CartDropdown carts={carts} setSelectedCart={setSelectedCart} openCart={openCart} />
