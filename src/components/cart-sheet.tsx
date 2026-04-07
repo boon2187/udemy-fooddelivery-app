@@ -45,6 +45,7 @@ export default function CartSheet({
     try {
       // カートアイテムの数量を更新するサーバーアクションを呼び出す
       await updateCartItemAction(quantity, cartItemId, cart.id);
+      const copyCart = { ...cart };
 
       if (quantity === 0) {
         // 削除処理
@@ -53,11 +54,25 @@ export default function CartSheet({
             () => mutateCart((prevCarts) => prevCarts?.filter((c) => c.id !== cart.id), false),
             200,
           );
+          return;
         }
         // カート内のアイテムを削除する
+        copyCart.cart_items = copyCart.cart_items.filter((item) => item.id !== cartItemId);
+        mutateCart(
+          (prevCarts) => prevCarts?.map((c) => (c.id === copyCart.id ? copyCart : c)),
+          false,
+        );
+        return;
       }
 
       // 数量を更新
+      copyCart.cart_items = copyCart.cart_items.map((item) =>
+        item.id === cartItemId ? { ...item, quantity } : item,
+      );
+      mutateCart(
+        (prevCarts) => prevCarts?.map((c) => (c.id === copyCart.id ? copyCart : c)),
+        false,
+      );
     } catch (error) {
       console.error(error);
       alert("エラーが発生しました");
