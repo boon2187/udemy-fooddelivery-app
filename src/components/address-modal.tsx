@@ -105,8 +105,7 @@ export default function AddressModal() {
     isLoading: loading,
     mutate,
   } = useSWR<AddressResponse>(`/api/address`, fetcher);
-  console.log("swr_data", data);
-
+  //   console.log("swr_data", data);
   if (error) {
     console.error(error);
     return <div>{error.message}</div>;

@@ -8,12 +8,20 @@ import CarouselContainer from "./carousel-container";
 import MenuCard from "./menu-card";
 import FlatMenuCard from "./flat-menu-card";
 import { InView } from "react-intersection-observer";
+import MenuModal from "./menu-modal";
+import { useModal } from "@/app/context/modalContext";
+import { useCartVisibility } from "@/app/context/cartContext";
+import { useCart } from "@/hooks/cart/useCart";
 
 interface MenuContentProps {
   categoryMenus: CategoryMenu[];
+  restaurantId: string;
 }
 
-export default function MenuContent({ categoryMenus }: MenuContentProps) {
+export default function MenuContent({ categoryMenus, restaurantId }: MenuContentProps) {
+  const { isOpen, setIsOpen, openModal, closeModal, selectedItem } = useModal();
+  const { targetCart, mutateCart } = useCart(restaurantId, false);
+  const { openCart } = useCartVisibility();
   const [activeCategoryId, setActiveCategoryId] = useState(categoryMenus[0].id);
 
   const handleSelectCategory = (categoryId: string) => {
@@ -32,7 +40,7 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
         onSelectCategory={handleSelectCategory}
         acitiveCategoryId={activeCategoryId}
       />
-      <div className="w-3/4 bg-blue-400">
+      <div className="w-3/4">
         {categoryMenus.map((category) => (
           <InView
             id={`${category.id}-menu`}
@@ -46,13 +54,13 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
               {category.id === "featured" ? (
                 <CarouselContainer slideNumber={4}>
                   {category.items.map((menu) => (
-                    <MenuCard key={menu.id} menu={menu} />
+                    <MenuCard key={menu.id} menu={menu} onClick={openModal} />
                   ))}
                 </CarouselContainer>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   {category.items.map((menu) => (
-                    <FlatMenuCard key={menu.id} menu={menu} />
+                    <FlatMenuCard key={menu.id} menu={menu} onClick={openModal} />
                   ))}
                 </div>
               )}
@@ -60,6 +68,16 @@ export default function MenuContent({ categoryMenus }: MenuContentProps) {
           </InView>
         ))}
       </div>
+
+      <MenuModal
+        isOpen={isOpen}
+        closeModal={closeModal}
+        selectedItem={selectedItem}
+        restaurantId={restaurantId}
+        openCart={openCart}
+        targetCart={targetCart}
+        mutateCart={mutateCart}
+      />
     </div>
   );
 }
