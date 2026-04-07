@@ -20,7 +20,7 @@ interface MenuContentProps {
 
 export default function MenuContent({ categoryMenus, restaurantId }: MenuContentProps) {
   const { isOpen, setIsOpen, openModal, closeModal, selectedItem } = useModal();
-  const { targetCart, mutateCart } = useCart(restaurantId);
+  const { targetCart, mutateCart } = useCart(restaurantId, false);
   const { openCart } = useCartVisibility();
   const [activeCategoryId, setActiveCategoryId] = useState(categoryMenus[0].id);
 
