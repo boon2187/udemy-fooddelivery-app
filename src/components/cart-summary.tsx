@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -10,8 +12,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useCart } from "@/hooks/cart/useCart";
 
-const CartSummary = () => {
+interface CartSummaryProps {
+  restaurantId: string;
+}
+
+const CartSummary = ({ restaurantId }: CartSummaryProps) => {
+  // 「会計に進む」ボタン押したときの処理
+  const { targetCart } = useCart(restaurantId);
+  console.log("targetCart(cart-summary):", targetCart);
   return (
     <Card className="max-w-md min-w-[420px]">
       <CardHeader>
