@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCart } from "@/hooks/cart/useCart";
+import CartSkeleton from "./cart-skelton";
 
 interface CartSummaryProps {
   restaurantId: string;
@@ -20,23 +21,38 @@ interface CartSummaryProps {
 
 const CartSummary = ({ restaurantId }: CartSummaryProps) => {
   // 「会計に進む」ボタン押したときの処理
-  const { targetCart } = useCart(restaurantId);
-  console.log("targetCart(cart-summary):", targetCart);
+  const { targetCart: cart, isLoading, cartsError } = useCart(restaurantId);
+  console.log("targetCart(cart-summary):", cart);
+  if (cartsError) {
+    console.error("Error fetching cart data:", cartsError);
+    return <div>カートの情報の取得に失敗しました: {cartsError.message}</div>;
+  }
+  if (isLoading) {
+    return <CartSkeleton />;
+  }
+
+  if (!cart) {
+    return <div>カートが見つかりません</div>;
+  }
+
   return (
     <Card className="max-w-md min-w-[420px]">
       <CardHeader>
-        <Link href={`#`} className="mb-4 flex justify-between items-center">
+        <Link
+          href={`/restaurant/${cart.restaurant_id}`}
+          className="mb-4 flex justify-between items-center"
+        >
           <div className="flex items-center gap-4 flex-1">
             <div className="relative size-12 rounded-full overflow-hidden flex-none">
               <Image
-                src={"/no_image.png"}
-                alt="レストラン画像"
+                src={cart.photoUrl}
+                alt={cart.restaurantName ?? "レストラン画像"}
                 fill
                 className="object-cover w-full h-full"
                 sizes="48px"
               />
             </div>
-            <div className="font-bold">{"レストラン名"}</div>
+            <div className="font-bold">{cart.restaurantName}</div>
           </div>
           <ChevronRight size={16} />
         </Link>
