@@ -15,6 +15,7 @@ import Link from "next/link";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
 import { KeyedMutator } from "swr";
+import { calculateItemTotal } from "@/lib/cart/utils";
 interface CartSheetProps {
   cart: Cart | null;
   count: number;
@@ -32,7 +33,7 @@ export default function CartSheet({
   closeCart,
   mutateCart,
 }: CartSheetProps) {
-  const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
+  // const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
   const calculateSubTotal = (items: CartItem[]) =>
     items.reduce((total, item) => total + calculateItemTotal(item), 0);

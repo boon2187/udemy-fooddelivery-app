@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/accordion";
 import { useCart } from "@/hooks/cart/useCart";
 import CartSkeleton from "./cart-skelton";
+import { calculateItemTotal, sumItems } from "@/lib/cart/utils";
+import { it } from "node:test";
 
 interface CartSummaryProps {
   restaurantId: string;
@@ -62,40 +64,46 @@ const CartSummary = ({ restaurantId }: CartSummaryProps) => {
         <hr className="my-2" />
         <Accordion type="single" collapsible defaultValue="item-1">
           <AccordionItem value="item-1">
-            <AccordionTrigger>カートの中身{"#"}個の商品</AccordionTrigger>
-            <AccordionContent className="flex items-center">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="relative size-14 rounded-full overflow-hidden flex-none">
-                  <Image
-                    src={"/no_image.png"}
-                    alt={"メニュー名"}
-                    fill
-                    sizes="56px"
-                    className="object-cover w-full h-full"
-                  />
+            <AccordionTrigger>カートの中身{sumItems(cart.cart_items)}個の商品</AccordionTrigger>
+            {cart.cart_items.map((item) => (
+              <AccordionContent key={item.id} className="flex items-center">
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="relative size-14 rounded-full overflow-hidden flex-none">
+                    <Image
+                      src={item.menus.photoUrl}
+                      alt={item.menus.name ?? "メニュー画像"}
+                      fill
+                      sizes="56px"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div>
+                    <div className="font-bold">{item.menus.name}</div>
+                    <p className="text-muted-foreground text-sm">
+                      ￥{calculateItemTotal(item).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-bold">{"メニュー名"}</div>
-                  <p className="text-muted-foreground text-sm">￥{100}</p>
-                </div>
-              </div>
 
-              <label htmlFor={`quantity`} className="sr-only">
-                数量
-              </label>
-              <select
-                id={`quantity`}
-                name="quantity"
-                className="border rounded-full pr-8 pl-4 bg-muted h-9"
-              >
-                <option value="0">削除する</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </AccordionContent>
+                <label htmlFor={`cart-quantity-${item.id}`} className="sr-only">
+                  数量
+                </label>
+                <select
+                  value={item.quantity}
+                  onChange={() => {}}
+                  id={`cart-quantity-${item.id}`}
+                  name="quantity"
+                  className="border rounded-full pr-8 pl-4 bg-muted h-9"
+                >
+                  <option value="0">削除する</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </AccordionContent>
+            ))}
           </AccordionItem>
         </Accordion>
       </CardContent>

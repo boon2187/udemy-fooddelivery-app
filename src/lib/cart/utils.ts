@@ -1,6 +1,9 @@
-import { Cart } from "@/types";
+import { Cart, CartItem } from "@/types";
 
-const sumItems = (cart: Cart) => cart.cart_items.reduce((sum, item) => sum + item.quantity, 0);
+export const sumItems = (cartItems: CartItem[]) =>
+  cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+export const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
 export function computeCartDisplayLogic(
   carts: Cart[] | undefined,
@@ -15,7 +18,7 @@ export function computeCartDisplayLogic(
   // カート１つだけ
   if (carts.length === 1) {
     const only = carts[0];
-    return { displayMode: "cartSheet", sheetCart: only, cartCount: sumItems(only) };
+    return { displayMode: "cartSheet", sheetCart: only, cartCount: sumItems(only.cart_items) };
   }
 
   // 選択されたカートあるばあい
@@ -23,7 +26,7 @@ export function computeCartDisplayLogic(
     return {
       displayMode: "cartSheet",
       sheetCart: selectedCart,
-      cartCount: sumItems(selectedCart),
+      cartCount: sumItems(selectedCart.cart_items),
     };
   }
 
@@ -32,7 +35,7 @@ export function computeCartDisplayLogic(
     return {
       displayMode: "cartSheet",
       sheetCart: targetCart,
-      cartCount: sumItems(targetCart),
+      cartCount: sumItems(targetCart.cart_items),
     };
   }
 
