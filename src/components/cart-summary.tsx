@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { useCart } from "@/hooks/cart/useCart";
 import CartSkeleton from "./cart-skelton";
-import { calculateItemTotal, sumItems } from "@/lib/cart/utils";
+import { calculateItemTotal, calculateSubTotal, sumItems } from "@/lib/cart/utils";
 import { it } from "node:test";
 
 interface CartSummaryProps {
@@ -36,6 +36,12 @@ const CartSummary = ({ restaurantId }: CartSummaryProps) => {
   if (!cart) {
     return <div>カートが見つかりません</div>;
   }
+
+  const subTotal = calculateSubTotal(cart.cart_items);
+  const fee = 100;
+  const service = 0;
+  const delivery = 0;
+  const total = subTotal + fee + service + delivery;
 
   return (
     <Card className="max-w-md min-w-[420px]">
@@ -113,25 +119,25 @@ const CartSummary = ({ restaurantId }: CartSummaryProps) => {
           <ul className="grid gap-4">
             <li className="flex justify-between text-muted-foreground">
               <p>小計</p>
-              <p>¥{1000}</p>
+              <p>¥{subTotal.toLocaleString()}</p>
             </li>
             <li className="flex justify-between text-muted-foreground">
               <p>手数料</p>
-              <p>¥ {0}</p>
+              <p>¥ {fee.toLocaleString()}</p>
             </li>
             <li className="flex justify-between text-muted-foreground">
               <p>サービス</p>
-              <p>¥ {0}</p>
+              <p>¥ {service.toLocaleString()}</p>
             </li>
             <li className="flex justify-between text-muted-foreground">
               <p>配達</p>
-              <p>¥ {0}</p>
+              <p>¥ {delivery.toLocaleString()}</p>
             </li>
           </ul>
           <hr className="my-2" />
           <div className="flex justify-between font-medium">
             <p>合計</p>
-            <p>¥{1000}</p>
+            <p>¥{total.toLocaleString()}</p>
           </div>
         </div>
       </CardFooter>

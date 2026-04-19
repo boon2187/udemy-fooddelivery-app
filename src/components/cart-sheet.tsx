@@ -1,4 +1,4 @@
-import { Cart, CartItem } from "@/types";
+import { Cart } from "@/types";
 import {
   Sheet,
   SheetClose,
@@ -15,7 +15,7 @@ import Link from "next/link";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
 import { KeyedMutator } from "swr";
-import { calculateItemTotal } from "@/lib/cart/utils";
+import { calculateItemTotal, calculateSubTotal } from "@/lib/cart/utils";
 interface CartSheetProps {
   cart: Cart | null;
   count: number;
@@ -35,8 +35,8 @@ export default function CartSheet({
 }: CartSheetProps) {
   // const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
-  const calculateSubTotal = (items: CartItem[]) =>
-    items.reduce((total, item) => total + calculateItemTotal(item), 0);
+  // const calculateSubTotal = (items: CartItem[]) =>
+  //   items.reduce((total, item) => total + calculateItemTotal(item), 0);
 
   const handleUpdateCartItem = async (value: string, cartItemId: number) => {
     // cartが存在しない場合は何もしない

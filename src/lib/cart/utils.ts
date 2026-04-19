@@ -5,6 +5,9 @@ export const sumItems = (cartItems: CartItem[]) =>
 
 export const calculateItemTotal = (item: CartItem) => item.menus.price * item.quantity;
 
+export const calculateSubTotal = (items: CartItem[]) =>
+  items.reduce((total, item) => total + calculateItemTotal(item), 0);
+
 export function computeCartDisplayLogic(
   carts: Cart[] | undefined,
   selectedCart: Cart | null = null,
