@@ -16,14 +16,18 @@ import { useCart } from "@/hooks/cart/useCart";
 import CartSkeleton from "./cart-skelton";
 import { calculateItemTotal, calculateSubTotal, sumItems } from "@/lib/cart/utils";
 import { it } from "node:test";
+import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
+import { useRouter } from "next/navigation";
 
 interface CartSummaryProps {
   restaurantId: string;
 }
 
 const CartSummary = ({ restaurantId }: CartSummaryProps) => {
+  const { push } = useRouter();
+
   // 「会計に進む」ボタン押したときの処理
-  const { targetCart: cart, isLoading, cartsError } = useCart(restaurantId);
+  const { targetCart: cart, isLoading, cartsError, mutateCart } = useCart(restaurantId);
   console.log("targetCart(cart-summary):", cart);
   if (cartsError) {
     console.error("Error fetching cart data:", cartsError);
@@ -42,6 +46,43 @@ const CartSummary = ({ restaurantId }: CartSummaryProps) => {
   const service = 0;
   const delivery = 0;
   const total = subTotal + fee + service + delivery;
+
+  const handleUpdateCartItem = async (value: string, cartItemId: number) => {
+    const quantity = Number(value);
+    try {
+      // カートアイテムの数量を更新するサーバーアクションを呼び出す
+      await updateCartItemAction(quantity, cartItemId, cart.id);
+      const copyCart = { ...cart };
+
+      if (quantity === 0) {
+        // 削除処理
+        if (cart.cart_items.length === 1) {
+          mutateCart((prevCarts) => prevCarts?.filter((c) => c.id !== cart.id), false);
+          push(`/restaurant/${cart.restaurant_id}`);
+          return;
+        }
+        // カート内のアイテムを削除する
+        copyCart.cart_items = copyCart.cart_items.filter((item) => item.id !== cartItemId);
+        mutateCart(
+          (prevCarts) => prevCarts?.map((c) => (c.id === copyCart.id ? copyCart : c)),
+          false,
+        );
+        return;
+      }
+
+      // 数量を更新
+      copyCart.cart_items = copyCart.cart_items.map((item) =>
+        item.id === cartItemId ? { ...item, quantity } : item,
+      );
+      mutateCart(
+        (prevCarts) => prevCarts?.map((c) => (c.id === copyCart.id ? copyCart : c)),
+        false,
+      );
+    } catch (error) {
+      console.error(error);
+      alert("エラーが発生しました");
+    }
+  };
 
   return (
     <Card className="max-w-md min-w-[420px]">
@@ -96,7 +137,7 @@ const CartSummary = ({ restaurantId }: CartSummaryProps) => {
                 </label>
                 <select
                   value={item.quantity}
-                  onChange={() => {}}
+                  onChange={(e) => handleUpdateCartItem(e.target.value, item.id)}
                   id={`cart-quantity-${item.id}`}
                   name="quantity"
                   className="border rounded-full pr-8 pl-4 bg-muted h-9"
